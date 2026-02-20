@@ -1,11 +1,14 @@
 # Resume Project
 
-This resume is built with **Petite-Vue** and **UnoCSS**. Because it dynamically fetches data from `resume.json` and `icons.json`, it **must be served via a web server** to work correctly.
+This resume is built with **Petite-Vue** and **UnoCSS**. It dynamically fetches data from `resume.json` and `icons.json`.
 
-## How to View
-If you open `index.html` directly in your browser as a file (`file://...`), the data will fail to load due to browser CORS security restrictions.
+## Quick View
+![Resume Preview](./resume-preview.png)
 
-### Option 1: Using Node.js (Recommended)
+## How to View Locally
+Because it fetches external JSON data, it **must be served via a web server** to work correctly.
+
+### Option 1: Using Node.js
 ```bash
 npx serve .
 ```
@@ -16,3 +19,16 @@ python3 -m http.server
 ```
 
 Once running, visit `http://localhost:3000` (or the port provided) to view the resume.
+
+---
+
+## How to Print (PDF & PNG)
+You can generate a PDF and a high-quality PNG preview in one command. This script requires **Google Chrome** (or Chromium) and **poppler-utils** (`pdftoppm`).
+
+```bash
+./print.sh
+```
+
+This will output:
+- `resume.pdf`
+- `resume-preview.png`
