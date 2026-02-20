@@ -1,0 +1,357 @@
+{
+  "personalInfo": {
+    "name": "Andrea <br>de Candia",
+    "initials": "AD",
+    "title": "Product Engineer",
+    "location": "US National - New York City",
+    "website": "https://andy-engineer.vercel.app/"
+  },
+  "about": "Versatile engineer focused on architectural design and AI-enhanced end-to-end delivery across domains",
+  "contact": [
+    {
+      "icon": "website-img",
+      "href": "https://www.andrea-dev.com/",
+      "text": "andrea-dev.com"
+    },
+    {
+      "icon": "linkedin-img",
+      "href": "https://www.linkedin.com/in/a-decandia",
+      "text": "in/a-decandia"
+    },
+    {
+      "icon": "github-img",
+      "href": "https://github.com/andrea-de",
+      "text": "github.com/andrea-de"
+    },
+    {
+      "icon": "email-img",
+      "href": "mailto:andy.decandia@gmail.com",
+      "text": "andy.decandia@gmail"
+    },
+    {
+      "icon": "phone-img",
+      "href": "tel:+12019612208",
+      "text": "+1 (201) 961 2208"
+    }
+  ],
+  "workExperience": [
+    {
+      "jobTitle": "Founding Engineer",
+      "jobTitle": "Product Engineer",
+      "time": "2023 - Present",
+      "duration": "27 months",
+      "company": "Advection Software",
+      "department": "",
+      "location": "Remote",
+      "remote": true,
+      "responsibilities": [
+                {
+                  "scope": "LLM Streaming Pipeline",
+                  "tech": "<strong>Node.js, Zod</strong>",
+                  "details": [
+                    "Architected a multi-channel streaming protocol for real-time agent-to-UI state sync."
+                  ]
+                },
+                {
+                  "scope": "Agentic Development",
+                  "tech": "<strong>Google AI SDK</strong>",
+                  "details": [
+                    "Engineered multi-step agentic systems for automated versioned workspace manipulation."
+                  ]
+                },
+                {
+                  "scope": "Real-Time Cost Tracking",
+                  "tech": "<strong>Serverless</strong>",
+                  "details": [
+                    "Built real-time LLM usage tracking with tiered cost accounting and budgeting."
+                  ]
+                },
+                {
+                  "scope": "Discovery Optimization",
+                  "tech": "<strong>GCP</strong>",
+                  "details": [
+                    "Scaled platform content feeds using cursor pagination and batch metadata aggregation."
+                  ]
+                },
+                {
+                  "scope": "Serverless Media Processing",
+                  "tech": "<strong>FFmpeg</strong>",
+                  "details": [
+                    "Automated serverless video transcoding for mobile-optimized ingestion and playback."
+                  ]
+                }
+              ],
+            "unifiedScope": "Full-Stack Product Engineering"
+    },
+    {
+      "jobTitle": "Principal Engineer",
+      "time": "2022 - 2023",
+      "duration": "12 months",
+      "company": "Mesa Cloud, Inc.",
+      "department": "Student Data Processing",
+      "location": "Austin, TX",
+      "remote": true,
+         "unifiedScope": "Data Infrastructure Engineering",
+    "responsibilities": [
+      {
+        "scope": "High-Volume ETL",
+        "tech": "<strong>Python, FastAPI, PostgreSQL</strong>",
+        "details": [
+          "Architected configurable ETL microservices processing millions of student records."
+        ]
+      },
+      {
+        "scope": "Workflow Parallelization",
+        "tech": "<strong>SQL, numpy, pandas</strong>",
+        "details": [
+          "Parallelized monolithic workflows using asynchronous workers for horizontal scaling."
+        ]
+      },
+      {
+        "scope": "Cloud Infrastructure",
+        "tech": "<strong>AWS</strong>",
+        "details": [
+          "Orchestrated scalable environments with Elastic Beanstalk and network policies."
+        ]
+      },
+      {
+        "scope": "Production-Parity Testing",
+        "tech": "<strong>Python</strong>",
+        "details": [
+          "Developed data anonymization pipelines to capture production edge cases for CI."
+        ]
+      }
+    ]
+    },
+    {
+      "jobTitle": "Staff Software Engineer",
+      "time": "2020 - 2022",
+      "duration": "18 months",
+      "company": "Intellisense.io",
+      "department": "Earth Mining Analytics",
+      "location": "Cambridge, UK",
+      "remote": true,
+      "unifiedScope": "Industrial Systems Engineering",
+          "responsibilities": [
+            {
+              "scope": "System Interoperability",
+              "tech": "<strong>Node.js, Docker</strong>",
+              "details": [
+                "Developed asynchronous services to bridge industrial site events with predictive models."
+              ]
+            },
+            {
+              "scope": "Complex Spatial Analytics",
+              "tech": "<strong>Python, Plotly</strong>",
+              "details": [
+                "Wrote library for volumetric composition transformations across disparate spatial models."
+              ]
+            },
+            {
+              "scope": "Strategic Planning",
+              "details": [
+                "Lead technical planning and roadmap delivery with internal and external stakeholders."
+              ]
+            },
+            {
+              "scope": "Collaborative Delivery",
+              "tech": "<strong>Docker, Kubernetes</strong>",
+              "details": [
+                "Managed containerized artifact delivery and technical synchronizations with client teams."
+              ]
+            }
+          ]
+      
+    },
+    {
+      "jobTitle": "Full Stack Engineer",
+      "time": "2018 - 2020",
+      "duration": "18 months",
+      "company": "Giesecke + Devrient",
+      "department": "Research and Development",
+      "location": "Barcelona, Spain",
+      "remote": true,
+      "responsibilities": [
+        {
+          "scope": "Distributed Systems",
+          "tech": "<strong>Java, Spring, Angular</strong>",
+          "details": [
+            "Developed microservices to orchestrate high-volume telecom message delivery."
+          ]
+        },
+        {
+          "scope": "QA Automation Framework",
+          "tech": "<strong>Cucumber, Selenium, CI/CD</strong>",
+          "details": [
+            "Architected custom BDD frameworks with proprietary registry and reporting integrations."
+          ]
+        },
+        {
+          "scope": "HMI Engineering",
+          "tech": "<strong>Android</strong>",
+          "details": [
+            "Led development of vehicle HMI prototypes for secure mobility showcased at MWC 2019."
+          ]
+        },
+        {
+          "scope": "Hardware Integration",
+          "tech": "<strong>Java</strong>",
+          "details": [
+            "Co-developed hardware-integration library for biometric vehicle authentication."
+          ]
+        }
+      ],
+      "unifiedScope": "Secure Mobility Platforms"
+    },
+    {
+      "jobTitle": "Junior Software Developer",
+      "time": "2018",
+      "duration": "6 months",
+      "company": "Aplicaciones En Informática Avanzada",
+      "department": "Data Analytics Innovations",
+      "location": "Sant Cugat, Spain",
+      "remote": false,
+      "unifiedScope": "Applied Data Systems",
+          "responsibilities": [
+            {
+              "scope": "Model Orchestration",
+              "tech": "<strong>Python, Django, Docker</strong>",
+              "details": [
+                "Architected containerized services to orchestrate and deploy predictive model runs."
+              ]
+            },
+            {
+              "scope": "Data Extrapolation",
+              "tech": "<strong>Python, numpy, pandas</strong>",
+              "details": [
+                "Developed data extrapolation logic to map user configurations to model inputs."
+              ]
+            },
+            {
+              "scope": "Bioscience Analytics",
+              "tech": "<strong>Java, JSP</strong>",
+              "details": [
+                "Built UI systems and automated document generation for bioscience analytics tools."
+              ]
+            },
+            {
+              "scope": "Data Visualization",
+              "tech": "<strong>D3, Plotly</strong>",
+              "details": [
+                "Designed reusable visualization components for application UIs and data reporting."
+              ]
+            }
+          ]
+      
+    },
+    {
+      "jobTitle": "Senior Mutual Fund Accountant",
+      "time": "2012 - 2015",
+      "duration": "3 years",
+      "company": "Alps Fund Services, Inc",
+      "department": "Mutual Fund Services",
+      "location": "Denver, Colorado",
+      "remote": false,
+      "hidden": false,
+      "responsibilities": [
+        {
+          "scope": "Fund NAV Operations",
+          "details": [
+            "Reconciled daily activity for daily mutual fund NAV calculations."
+          ]
+        },
+        {
+          "scope": "Process Automation",
+          "details": [
+            "Implemented automated workflows for Bloomberg terminal-driven operations."
+          ]
+        }
+      ]
+    }
+  ],
+  "methodologies": [
+    "Scrum Agile CI/CD",
+    "Microservices Architecture",
+    "Test Driven Development",
+    "Event Driven Architecture"
+  ],
+  "education": {
+    "school": "Rutgers University",
+    "year": "2011",
+    "degrees": [
+      "Bachelor of Economics",
+      "Bachelor of Political Science"
+    ],
+    "description": "Advanced math and statistical modeling with completed engineering core requirements"
+  },
+  "otherActivities": [
+    "Teaching",
+    "Tennis, Skiing, Sailing, Windsurfing",
+    "Language Study"
+  ],
+  "technologies": {
+    "primary": [
+      "Typescript",
+      "Node.js",
+      "React",
+      "Python",
+      "Java",
+      "Docker",
+      "GCP",
+      "AWS",
+      "Flutter"
+    ],
+    "detailed": {
+      "node": [
+        "Typescript",
+        "React",
+        "Node.js",
+        "PostgreSQL"
+      ],
+      "python": [
+        "Python",
+        "MongoDB",
+        "Django",
+        "Plotly"
+      ],
+      "java": [
+        "Java",
+        "Spring",
+        "Selenium",
+        "Android"
+      ],
+      "devops": [
+        "Amazon Web Services",
+        "Docker",
+        "Kubernetes",
+        "Flutter"
+      ]
+    }
+  },
+  "projects": [
+    {
+      "title": "Multimedia Platform",
+      "name": "Gamespark",
+      "url": "https://gamespark.app/",
+      "hidden": false
+    },
+    {
+      "title": "Mobile Application",
+      "name": "Weatherie",
+      "omit-url": "http://weather-expressed.vercel.app",
+      "hidden": false
+    },
+    {
+      "title": "Puzzle Game",
+      "name": "Cruffled",
+      "url": "https://www.dailycrumble.com",
+      "hidden": false
+    },
+    {
+      "title": "Arcade Game",
+      "omit-name": "Square Game",
+      "url": "https://https://squares-b05d9.web.app",
+      "hidden": true
+    }
+  ]
+}

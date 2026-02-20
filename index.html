@@ -1,0 +1,634 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Resume</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <!-- Fonts -->
+        <link
+            href="https://fonts.googleapis.com/css?family=Nunito&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
+            rel="stylesheet"
+        />
+
+        <!-- UnoCSS Runtime -->
+        <script src="https://cdn.jsdelivr.net/npm/@unocss/runtime"></script>
+        <script>
+            window.__unocss = {
+                theme: {
+                    fontFamily: {
+                        nunito: ["Nunito", "sans-serif"],
+                        montserrat: ["Montserrat", "sans-serif"],
+                        system: ["system-ui", "sans-serif"],
+                    },
+                    colors: {
+                        navy: "#000080",
+                    },
+                },
+            };
+        </script>
+
+        <!-- Petite-Vue -->
+        <script src="https://unpkg.com/petite-vue"></script>
+
+        <style>
+            /* Essential styles that can't be done with UnoCSS */
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+            }
+
+            * {
+                list-style: none;
+            }
+
+            ul {
+                padding: 0;
+                margin: 0;
+            }
+
+            strong {
+                font-weight: bold;
+            }
+
+            /* Font family override */
+            body {
+                font-family: "Nunito", sans-serif !important;
+                font-size: 0.90em !important;
+                font-weight: 400 !important;
+                line-height: 1.35;
+                background: #fff;
+                color: #333;
+            }
+
+            .resume-app {
+                width: 100%;
+                min-height: 100vh;
+            }
+
+            .resume-columns {
+                display: flex;
+                width: 100%;
+                min-height: 100vh;
+                align-items: stretch;
+            }
+
+            .main-column {
+                width: 72%;
+                box-sizing: border-box;
+                padding: 1em 1.2em 1em 1.2em;
+                border-left: 1px solid rgba(0, 0, 0, 0.05);
+            }
+
+            /* Fix link colors in main column */
+            .main-column a {
+                color: #0f766e !important;
+                text-decoration-thickness: 1px;
+                text-underline-offset: 2px;
+            }
+
+            .sidebar {
+                order: -1;
+                width: 28%;
+                box-sizing: border-box;
+                background: #14b8a6;
+                color: #fff;
+                padding: 0.6em 0;
+                padding-left: 0.8em;
+                padding-right: 0.8em;
+            }
+
+            .sidebar a {
+                color: #fff !important;
+            }
+
+            .sidebar .contact-link {
+                text-decoration: none !important;
+            }
+
+            .sidebar .name-link {
+                text-decoration: none !important;
+            }
+
+            .initials-box {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 120px;
+                height: 120px;
+                background: rgba(255, 255, 255, 0.1);
+                border: 4px solid #fff;
+                font-family: "Montserrat", sans-serif;
+                font-weight: 900;
+                font-size: 3.8em;
+                color: #fff;
+                margin-bottom: 0.3em;
+                letter-spacing: -0.05em;
+                border-radius: 2px;
+                overflow: hidden;
+            }
+
+            .initials-box::after {
+                content: "";
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                width: 0;
+                height: 0;
+                border-style: solid;
+                border-width: 0 0 20px 60px;
+                border-color: transparent transparent #fff transparent;
+            }
+
+            .sidebar h2 {
+                border-bottom: 1.5px solid rgba(255, 255, 255, 0.3);
+                <!-- font-size: 1.05em; -->
+                letter-spacing: 0.05em;
+            }
+
+
+            .sidebar .about-text {
+                font-size: 1.1em;
+                line-height: 1.4;
+                opacity: 0.95;
+            }
+
+            .sidebar .contact-link, .sidebar .project-link {
+                font-size: 1.05em;
+                opacity: 0.9;
+            }
+
+            .sidebar .degree-item {
+                font-size: 1em;
+                margin-bottom: 0.4em;
+            }
+
+            .sidebar .school-name {
+                font-size: 1.15em;
+                font-weight: 700;
+            }
+
+            .dept::before {
+                margin-left: 1em;
+                margin-right: 1em;
+                content: "  -  ";
+            }
+
+            .projects .icon {
+                display: none;
+            }
+
+            .work-experience-list > li {
+                margin-bottom: 0.9em;
+                padding-bottom: 0.5em;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            }
+
+            .work-experience-list > li:last-child {
+                margin-bottom: 0;
+                padding-bottom: 0;
+                border-bottom: none;
+            }
+
+            .job-time {
+                color: rgba(0, 0, 0, 0.5);
+                font-weight: 600;
+                font-size: 0.85em;
+                font-variant-numeric: tabular-nums;
+                letter-spacing: 0.02em;
+            }
+
+            .job-heading {
+                font-size: 1.05em;
+                line-height: 1.2;
+            }
+
+            .job-title {
+                font-weight: 800;
+                color: #1a1a1a;
+            }
+
+            .job-company {
+                font-style: italic;
+                font-weight: 600;
+                color: #14b8a6;
+            }
+
+            .job-scope {
+                font-size: 0.82em;
+                font-weight: 600;
+                color: rgba(0, 0, 0, 0.45);
+                text-transform: uppercase;
+                letter-spacing: 0.03em;
+            }
+
+            .responsibility-item {
+                position: relative;
+                padding-left: 0.1em;
+                margin-bottom: 0.15em;
+                line-height: 1.25;
+                font-size: 0.92em;
+            }
+
+            .job-tech-chips {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+                gap: 0.3em;
+                margin-top: 0.4em;
+            }
+
+            .job-tech-chip {
+                display: inline-block;
+                padding: 0.2em 0.7em;
+                border: 1px solid rgba(20, 184, 166, 0.15);
+                border-radius: 6px;
+                background: rgba(20, 184, 166, 0.05);
+                color: #0f766e;
+                font-size: 0.85em;
+                font-weight: 700;
+                line-height: 1.2;
+            }
+
+            /* Print rules for conflicts */
+            @page {
+                margin: 0;
+            }
+
+            @media print {
+                html,
+                body {
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    -webkit-print-color-adjust: exact;
+                    print-color-adjust: exact;
+                }
+
+                .resume-app,
+                .resume-columns {
+                    min-height: 100vh;
+                }
+
+                .about {
+                    <!-- font-size: 1em !important; -->
+                }
+
+                .picture img {
+                    width: 8em !important;
+                }
+
+                .technologies {
+                    margin-top: -0.5em !important;
+                    margin-bottom: 0 !important;
+                }
+
+                .technologies ul {
+                    margin-right: 2em !important;
+                    margin-bottom: 0em !important;
+                }
+            }
+        </style>
+    </head>
+
+    <body class="font-nunito w-full">
+        <div v-scope="ResumeApp()" @vue:mounted="loadResume" class="resume-app">
+            <!-- Column Container -->
+            <div class="resume-columns">
+                <!-- Side Column - Info -->
+                <div class="sidebar text-left">
+                    <section class="info pt-1 pb-1">
+                        <!-- Monogram -->
+                        <div class="initials-box" v-text="resume.personalInfo?.initials"></div>
+
+                        <!-- Name -->
+                        <h1 class="mt-1  ml-1 mb-1 leading-tight text-[2.5em] font-montserrat font-extrabold tracking-tight text-left">
+                            <a
+                                :href="resume.personalInfo?.website"
+                                class="name-link"
+                                v-html="resume.personalInfo?.name"
+                            ></a>
+                        </h1>
+
+                        <!-- Job Title -->
+                        <div
+                            class="italic font-medium text-[1.15em] text-left mt-0.5 mb-2 ml-1 opacity-90 tracking-wide"
+                            v-text="resume.personalInfo?.title"
+                        ></div>
+
+                        <!-- Picture -->
+                        <div class="hidden pl-[2em] text-center" hidden>
+                            <img
+                                src="src/pro.jpg"
+                                alt="Picture"
+                                class="w-[15em] rounded-full"
+                            />
+                        </div>
+                    </section>
+
+                    <!-- About -->
+                    <section v-if="resume.about" class="text-left ml-1">
+                        <div class="about-text">
+                            <p class="mt-0" v-text="resume.about"></p>
+                        </div>
+                    </section>
+
+                    <!-- Contact -->
+                    <h2 class="font-montserrat font-medium uppercase">
+                        Links & Contact
+                    </h2>
+                    <section v-if="resume.contact" class="text-left mb-2 ml-2">
+                        <ul>
+                            <li
+                                v-for="(contactItem, index) in resume.contact"
+                                :key="index"
+                                class="flex items-center justify-start gap-[0.7em] text-left mb-2.5"
+                                v-show="!contactItem.hidden"
+                            >
+                                <span
+                                    :style="getIconStyle(contactItem.icon, { size: 1.1, white: true })"
+                                ></span>
+                                <a
+                                    :href="contactItem.href"
+                                    class="contact-link"
+                                    v-text="contactItem.text"
+                                ></a>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <!-- Education -->
+                    <h2 class="font-montserrat font-medium uppercase">
+                        Education
+                    </h2>
+                    <section v-if="resume.education" class="text-left mb-2">
+                        <div>
+                            <h3 class="school-name mb-1" v-text="resume.education.school"></h3>
+                            <div
+                                v-for="(degree, index) in resume.education.degrees"
+                                :key="index"
+                                class="degree-item italic opacity-90"
+                                v-text="degree"
+                            ></div>
+                            <div class="mt-2 ml-2 text-[0.95em] opacity-80 leading-snug">
+                                <span v-text="resume.education.description"></span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Products / Projects -->
+                    <h2 class="font-montserrat font-medium uppercase">
+                        Products
+                    </h2>
+                    <section v-if="resume.projects">
+                        <div class="pb-4 ml-2">
+                            <ul>
+                                <li
+                                    v-for="(project, index) in resume.projects"
+                                    :key="index"
+                                    v-show="!project.hidden"
+                                    class="mb-3.5"
+                                >
+                                    <div class="text-[0.9em] uppercase tracking-wider opacity-70 mb-0.5" v-text="project.title"></div>
+                                    <a
+                                        :href="project.url"
+                                        class="project-link font-bold border-b border-white/30 hover:border-white/60 transition-colors no-underline"
+                                        v-text="project.name"
+                                    ></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Main Column - Work Experience -->
+                <div class="main-column text-left">
+                    <!-- Work Experience -->
+                    <h2 class="text-[1.3em] font-montserrat font-extrabold uppercase tracking-tight mb-3 text-teal-600">Work Experience</h2>
+                    <ul
+                        class="work-experience-list text-left ml-0 mt-2 pl-0"
+                        v-if="resume.workExperience"
+                    >
+                        <li
+                            v-for="(job, index) in resume.workExperience"
+                            :key="index"
+                            v-show="!job.hidden"
+                        >
+                            <div
+                                class="flex items-baseline justify-between gap-4 mb-1 mr-4"
+                            >
+                                <h3 class="job-heading m-0">
+                                    <span
+                                        class="job-title"
+                                        v-text="job.jobTitle"
+                                    ></span>
+                                </h3>
+                                <div class="flex items-baseline gap-3">
+                                    <span
+                                        v-if="job.company"
+                                        class="job-company"
+                                        v-text="job.company"
+                                    ></span>
+                                    <h3
+                                        class="job-time m-0 text-right whitespace-nowrap"
+                                        v-text="job.time"
+                                    ></h3>
+                                </div>
+                            </div>
+                            <div
+                                v-if="job.unifiedScope"
+                                class="job-scope mb-2"
+                                v-text="job.unifiedScope"
+                            ></div>
+                            <ul class="text-left mb-3 pl-0">
+                                <li
+                                    v-for="(responsibility, respIndex) in job.responsibilities"
+                                    :key="respIndex"
+                                    class="responsibility-item"
+                                >
+                                    <span
+                                        v-for="(line, lineIndex) in getResponsibilityLines(responsibility)"
+                                        :key="lineIndex"
+                                        v-text="line"
+                                    ></span>
+                                </li>
+                            </ul>
+                            <ul
+                                v-if="getJobTechList(job).length"
+                                class="job-tech-chips"
+                            >
+                                <li
+                                    v-for="(tech, techIndex) in getJobTechList(job)"
+                                    :key="techIndex"
+                                    class="job-tech-chip"
+                                    v-text="tech"
+                                ></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Bottom Technologies Section -->
+                <section
+                    v-if="resume.technologies?.detailed"
+                    class="-mt-[0.5em] text-left w-full clear-both"
+                    hidden
+                >
+                    <h2
+                        class="mb-0 font-montserrat font-medium uppercase mb-[5px]"
+                    >
+                        Technologies
+                    </h2>
+                    <div
+                        class="mt-0 w-full flex justify-between flex-wrap text-[1.3em]"
+                    >
+                        <ul
+                            v-for="(techs, category) in resume.technologies.detailed"
+                            :key="category"
+                            class="mt-[1em] flex-1 mr-[2em] last:mr-0"
+                        >
+                            <li
+                                v-for="(tech, index) in techs"
+                                :key="index"
+                                class="flex items-center gap-2 mb-1"
+                            >
+                                <span :style="getIconStyle(tech)"></span>
+                                <span v-if="tech === 'Svelte / React'">
+                                    <span
+                                        :style="getIconStyle('React')"
+                                        class="inline-block mr-1"
+                                    ></span>
+                                    <span v-text="tech"></span>
+                                </span>
+                                <span v-else v-text="tech"></span>
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <script>
+            function ResumeApp() {
+                return {
+                    resume: {},
+                    icons: {},
+
+                    async loadResume() {
+                        try {
+                            const [resumeResponse, iconsResponse] =
+                                await Promise.all([
+                                    fetch("./resume.json"),
+                                    fetch("./icons.json"),
+                                ]);
+                            this.resume = await resumeResponse.json();
+                            this.icons = await iconsResponse.json();
+                            console.log("Resume loaded:", this.resume);
+                            console.log("Icons loaded:", this.icons);
+                        } catch (error) {
+                            console.error("Error loading data:", error);
+                        }
+                    },
+
+                    getIconStyle(iconName, options = {}) {
+                        const iconPath = this.icons[iconName];
+                        const iconSize = options.size || 1.5;
+                        return iconPath
+                            ? {
+                                  backgroundImage: `url(${iconPath})`,
+                                  backgroundSize: "contain",
+                                  backgroundRepeat: "no-repeat",
+                                  backgroundPosition: "center",
+                                  display: "inline-block",
+                                  width: `${iconSize}em`,
+                                  height: `${iconSize}em`,
+                                  ...(options.white
+                                      ? { filter: "brightness(0) invert(1)" }
+                                      : {}),
+                              }
+                            : {};
+                    },
+
+                    getResponsibilityLines(responsibility) {
+                        if (
+                            responsibility &&
+                            typeof responsibility === "object"
+                        ) {
+                            if (
+                                Array.isArray(responsibility.details) &&
+                                responsibility.details.length
+                            ) {
+                                return responsibility.details;
+                            }
+
+                            if (responsibility.description) {
+                                return [responsibility.description];
+                            }
+
+                            return [];
+                        }
+
+                        if (
+                            typeof responsibility === "string" &&
+                            responsibility.trim()
+                        ) {
+                            return [responsibility];
+                        }
+
+                        return [];
+                    },
+
+                    getJobTechList(job) {
+                        if (!job || !Array.isArray(job.responsibilities)) {
+                            return [];
+                        }
+
+                        const uniqueTech = [];
+                        const seenTech = new Set();
+
+                        for (const responsibility of job.responsibilities) {
+                            if (
+                                !responsibility ||
+                                typeof responsibility !== "object" ||
+                                !responsibility.tech
+                            ) {
+                                continue;
+                            }
+
+                            const parsedTech = String(responsibility.tech)
+                                .replace(/<[^>]+>/g, "")
+                                .split(",")
+                                .map((tech) => tech.trim())
+                                .filter(Boolean);
+
+                            for (const tech of parsedTech) {
+                                const normalized = tech.toLowerCase();
+                                if (!seenTech.has(normalized)) {
+                                    seenTech.add(normalized);
+                                    uniqueTech.push(tech);
+                                }
+                            }
+                        }
+
+                        return uniqueTech;
+                    },
+
+                    getJobTech(job) {
+                        return this.getJobTechList(job).join(", ");
+                    },
+                };
+            }
+
+            // Initialize Petite-Vue
+            PetiteVue.createApp().mount();
+        </script>
+    </body>
+</html>
