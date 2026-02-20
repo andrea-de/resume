@@ -14,7 +14,7 @@ sleep 2
 # Generate the PDF using headless Chrome
 # If you use chromium, change 'google-chrome' to 'chromium-browser'
 echo "Generating resume.pdf..."
-google-chrome --headless --disable-gpu --print-to-pdf=resume.pdf --no-margins http://localhost:$PORT/index.html
+google-chrome --headless --disable-gpu --print-to-pdf=resume.pdf --no-margins --virtual-time-budget=5000 http://localhost:$PORT/index.html
 
 # Convert PDF to PNG for README preview
 if command -v pdftoppm &> /dev/null
