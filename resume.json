@@ -338,13 +338,13 @@
     {
       "title": "Mobile Application",
       "name": "Weatherie",
-      "omit-url": "http://weather-expressed.vercel.app",
+      "url": "http://www.weatherie.com",
       "hidden": false
     },
     {
       "title": "Puzzle Game",
       "name": "Cruffled",
-      "url": "https://www.dailycrumble.com",
+      "url": "https://www.cruffled.com",
       "hidden": false
     },
     {
