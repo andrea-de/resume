@@ -531,6 +531,38 @@
                                 ]);
                             this.resume = await resumeResponse.json();
                             this.icons = await iconsResponse.json();
+
+                            // Handle tracking parameters from URL
+                            const urlParams = new URLSearchParams(window.location.search);
+                            const ref = urlParams.get("ref");
+                            const job = urlParams.get("job");
+
+                            const updateLinks = (obj) => {
+                                if (obj.href && obj.href.includes("andrea-dev.com")) {
+                                    if (ref) {
+                                        const sep = obj.href.includes("?") ? "&" : "?";
+                                        obj.href += `${sep}utm_campaign=${ref}`;
+                                    }
+                                    if (job) {
+                                        const sep = obj.href.includes("?") ? "&" : "?";
+                                        // Use encodeURIComponent for the job URL
+                                        obj.href += `${sep}utm_content=${encodeURIComponent(job)}`;
+                                    }
+                                }
+                            };
+
+                            if (ref || job) {
+                                if (this.resume.contact) {
+                                    this.resume.contact.forEach(updateLinks);
+                                }
+                                if (this.resume.personalInfo?.website) {
+                                    // Wrap in object to use the same helper
+                                    const mockObj = { href: this.resume.personalInfo.website };
+                                    updateLinks(mockObj);
+                                    this.resume.personalInfo.website = mockObj.href;
+                                }
+                            }
+
                             console.log("Resume loaded:", this.resume);
                             console.log("Icons loaded:", this.icons);
                         } catch (error) {

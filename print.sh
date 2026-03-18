@@ -1,10 +1,9 @@
 #!/bin/bash
 
-# Port to use for the temporary server
-PORT=8989
-
-# Start a simple python server in the background
+# Start server on an ephemeral port (0) to avoid conflicts
 echo "Starting temporary server..."
+PORT=8989
+fuser -k $PORT/tcp > /dev/null 2>&1
 python3 -m http.server $PORT > /dev/null 2>&1 &
 SERVER_PID=$!
 
@@ -12,9 +11,8 @@ SERVER_PID=$!
 sleep 2
 
 # Generate the PDF using headless Chrome
-# If you use chromium, change 'google-chrome' to 'chromium-browser'
 echo "Generating resume.pdf..."
-google-chrome --headless --disable-gpu --print-to-pdf=resume.pdf --no-margins --virtual-time-budget=5000 http://localhost:$PORT/index.html
+google-chrome --headless=new --disable-gpu --print-to-pdf=resume.pdf --no-margins --virtual-time-budget=5000 http://localhost:$PORT/index.html 2>/dev/null
 
 # Convert PDF to PNG for README preview
 if command -v pdftoppm &> /dev/null
@@ -25,8 +23,10 @@ else
     echo "Note: 'pdftoppm' not found. Skipping PNG conversion."
 fi
 
-# Kill the background server
-kill $SERVER_PID
+# Clean up
+if [ ! -z "$SERVER_PID" ]; then
+    kill $SERVER_PID > /dev/null 2>&1
+fi
 
 echo "---------------------------------"
 echo "Done! Saved to: resume.pdf and resume-preview.png"

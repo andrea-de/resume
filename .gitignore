@@ -1,0 +1,13 @@
+# Ignore all generated resumes
+resume-*.pdf
+resume-*-preview.png
+
+# Explicitly track the main ones
+!resume.pdf
+!resume-preview.png
+
+# System / Editor
+.DS_Store
+node_modules/
+.vscode/
+.idea/
