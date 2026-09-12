@@ -350,13 +350,24 @@
                             <li
                                 v-for="(contactItem, index) in resume.contact"
                                 :key="index"
-                                class="flex items-center justify-start gap-[0.7em] text-left mb-2.5"
+                                class="flex items-start justify-start gap-[0.7em] text-left mb-2.5"
                                 v-show="!contactItem.hidden"
                             >
                                 <span
                                     :style="getIconStyle(contactItem.icon, { size: 1.1, white: true })"
                                 ></span>
+                                <span v-if="contactItem.text.includes('@')">
+                                    <a
+                                        :href="contactItem.href"
+                                        class="contact-link"
+                                        v-text="contactItem.text.split('@')[0]"
+                                    ></a>
+                                    <div class="text-[0.8em] text-left opacity-80 -mt-0.5 leading-tight"
+                                        v-text="'@' + contactItem.text.split('@')[1]"
+                                    ></div>
+                                </span>
                                 <a
+                                    v-else
                                     :href="contactItem.href"
                                     class="contact-link"
                                     v-text="contactItem.text"
@@ -395,14 +406,20 @@
                                     v-for="(project, index) in resume.projects"
                                     :key="index"
                                     v-show="!project.hidden"
-                                    class="mb-3.5"
+                                    class="mb-2.5 flex items-center justify-between"
                                 >
-                                    <div class="text-[0.9em] uppercase tracking-wider opacity-70 mb-0.5" v-text="project.title"></div>
                                     <a
                                         :href="project.url"
                                         class="project-link font-bold border-b border-white/30 hover:border-white/60 transition-colors no-underline"
                                         v-text="project.name"
                                     ></a>
+                                    <span v-if="project.platforms" class="flex items-center gap-1.5 ml-2">
+                                        <span
+                                            v-for="(platform, pIndex) in project.platforms"
+                                            :key="pIndex"
+                                            :style="getIconStyle(platform, { size: 0.85 })"
+                                        ></span>
+                                    </span>
                                 </li>
                             </ul>
                         </div>
@@ -428,8 +445,7 @@
                                 <h3 class="job-heading m-0">
                                     <span
                                         class="job-title"
-                                        v-text="job.jobTitle"
-                                    ></span>
+                                    ><span v-if="job.jobTitlePrefix && !job.hidePrefix" v-text="job.jobTitlePrefix + ' '"></span><span v-text="job.jobTitle"></span></span>
                                 </h3>
                                 <div class="flex items-baseline gap-3">
                                     <span

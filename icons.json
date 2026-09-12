@@ -27,5 +27,11 @@
   "Microservices Architecture": "src/icons/micro-img.png",
   "Test Driven Development": "src/icons/tdd-img.png",
   "Event Driven Architecture": "src/icons/eda-img.png",
-  "web-img": "src/icons/web-img.png"
+  "web-img": "src/icons/web-img.png",
+  "appstore-img": "src/icons/appstore.png",
+  "playstore-img": "src/icons/playstore.png",
+  "web-platform-img": "src/icons/web.png",
+  "apple-white": "src/icons/apple-white.webp",
+  "android-white": "src/icons/android-white.png",
+  "globe-white": "src/icons/globe-white.png"
 }

@@ -6,7 +6,7 @@
     "location": "US National - New York City",
     "website": "https://andy-engineer.vercel.app/"
   },
-  "about": "Versatile engineer focused on architectural design and AI-enhanced end-to-end delivery across domains",
+  "about": "Accelerating product delivery through multi-agent orchestration and AI development harnesses.",
   "contact": [
     {
       "icon": "website-img",
@@ -26,7 +26,7 @@
     {
       "icon": "email-img",
       "href": "mailto:andy.decandia@gmail.com",
-      "text": "andy.decandia@gmail"
+      "text": "andy.decandia@gmail.com"
     },
     {
       "icon": "phone-img",
@@ -36,52 +36,52 @@
   ],
   "workExperience": [
     {
-      "jobTitle": "Founding Engineer",
+      "jobTitlePrefix": "Founding",
+      "hidePrefix": true,
       "jobTitle": "Product Engineer",
       "time": "2023 - Present",
       "duration": "27 months",
-      "company": "Advection Software",
+      "company": "Advection Software, LLC",
       "department": "",
       "location": "Remote",
       "remote": true,
       "responsibilities": [
-                {
-                  "scope": "LLM Streaming Pipeline",
-                  "tech": "<strong>Node.js, Zod</strong>",
-                  "details": [
-                    "Architected a multi-channel streaming protocol for real-time agent-to-UI state sync."
-                  ]
-                },
-                {
-                  "scope": "Agentic Development",
-                  "tech": "<strong>Google AI SDK</strong>",
-                  "details": [
-                    "Engineered multi-step agentic systems for automated versioned workspace manipulation."
-                  ]
-                },
-                {
-                  "scope": "Real-Time Cost Tracking",
-                  "tech": "<strong>Serverless</strong>",
-                  "details": [
-                    "Built real-time LLM usage tracking with tiered cost accounting and budgeting."
-                  ]
-                },
-                {
-                  "scope": "Discovery Optimization",
-                  "tech": "<strong>GCP</strong>",
-                  "details": [
-                    "Scaled platform content feeds using cursor pagination and batch metadata aggregation."
-                  ]
-                },
-                {
-                  "scope": "Serverless Media Processing",
-                  "tech": "<strong>FFmpeg</strong>",
-                  "details": [
-                    "Automated serverless video transcoding for mobile-optimized ingestion and playback."
-                  ]
-                }
-              ],
-            "unifiedScope": "Full-Stack Product Engineering"
+        {
+          "scope": "Agent Orchestration",
+          "tech": "<strong>Agent Orchestration, MCP</strong>",
+          "details": [
+            "Direct concurrent AI agents across custom remote gateways to ship features in parallel."
+          ]
+        },
+        {
+          "scope": "Development Harnesses",
+          "tech": "<strong>AI Harnesses, Playwright</strong>",
+          "details": [
+            "Wrap AI agents in headless execution harnesses to autonomously build and verify code."
+          ]
+        },
+        {
+          "scope": "Context Engineering",
+          "tech": "<strong>Context Engineering</strong>",
+          "details": [
+            "Architect portable, node-based knowledge networks for decentralized agent context."
+          ]
+        },
+        {
+          "scope": "Full-Lifecycle Delivery",
+          "tech": "<strong>GCP</strong>",
+          "details": [
+            "Deliver and maintain numerous products from concept to release on iOS, Android, and web."
+          ]
+        },
+        {
+          "scope": "Generative AI Engines",
+          "details": [
+            "Build user-facing AI engines synthesizing dynamic media, software, and rich metadata."
+          ]
+        }
+      ],
+      "unifiedScope": "Full-Stack Product Engineering"
     },
     {
       "jobTitle": "Software Engineer",
@@ -91,37 +91,37 @@
       "department": "Student Data Processing",
       "location": "Austin, TX",
       "remote": true,
-         "unifiedScope": "Data Infrastructure Engineering",
-    "responsibilities": [
-      {
-        "scope": "High-Volume ETL",
-        "tech": "<strong>Python, FastAPI, PostgreSQL</strong>",
-        "details": [
-          "Architected configurable ETL microservices processing millions of student records."
-        ]
-      },
-      {
-        "scope": "Workflow Parallelization",
-        "tech": "<strong>SQL, numpy, pandas</strong>",
-        "details": [
-          "Parallelized monolithic workflows using asynchronous workers for horizontal scaling."
-        ]
-      },
-      {
-        "scope": "Cloud Infrastructure",
-        "tech": "<strong>AWS</strong>",
-        "details": [
-          "Orchestrated scalable environments with Elastic Beanstalk and network policies."
-        ]
-      },
-      {
-        "scope": "Production-Parity Testing",
-        "tech": "<strong>Python</strong>",
-        "details": [
-          "Developed data anonymization pipelines to capture production edge cases for CI."
-        ]
-      }
-    ]
+      "unifiedScope": "Data Infrastructure Engineering",
+      "responsibilities": [
+        {
+          "scope": "High-Volume ETL",
+          "tech": "<strong>Python, FastAPI, PostgreSQL</strong>",
+          "details": [
+            "Architected configurable ETL microservices processing millions of student records."
+          ]
+        },
+        {
+          "scope": "Workflow Parallelization",
+          "tech": "<strong>SQL, numpy, pandas</strong>",
+          "details": [
+            "Parallelized monolithic workflows using asynchronous workers for horizontal scaling."
+          ]
+        },
+        {
+          "scope": "Cloud Infrastructure",
+          "tech": "<strong>AWS</strong>",
+          "details": [
+            "Orchestrated scalable environments with Elastic Beanstalk and network policies."
+          ]
+        },
+        {
+          "scope": "Production-Parity Testing",
+          "tech": "<strong>Python</strong>",
+          "details": [
+            "Developed data anonymization pipelines to capture production edge cases for CI."
+          ]
+        }
+      ]
     },
     {
       "jobTitle": "Staff Software Engineer",
@@ -132,36 +132,35 @@
       "location": "Cambridge, UK",
       "remote": true,
       "unifiedScope": "Industrial Systems Engineering",
-          "responsibilities": [
-            {
-              "scope": "System Interoperability",
-              "tech": "<strong>Node.js, Docker</strong>",
-              "details": [
-                "Developed asynchronous services to bridge industrial site events with predictive models."
-              ]
-            },
-            {
-              "scope": "Complex Spatial Analytics",
-              "tech": "<strong>Python, Plotly</strong>",
-              "details": [
-                "Wrote library for volumetric composition transformations across disparate spatial models."
-              ]
-            },
-            {
-              "scope": "Strategic Planning",
-              "details": [
-                "Lead technical planning and roadmap delivery with internal and external stakeholders."
-              ]
-            },
-            {
-              "scope": "Collaborative Delivery",
-              "tech": "<strong>Docker, Kubernetes</strong>",
-              "details": [
-                "Managed containerized artifact delivery and technical synchronizations with client teams."
-              ]
-            }
+      "responsibilities": [
+        {
+          "scope": "System Interoperability",
+          "tech": "<strong>Node.js, Docker</strong>",
+          "details": [
+            "Developed asynchronous services to bridge industrial site events with predictive models."
           ]
-      
+        },
+        {
+          "scope": "Complex Spatial Analytics",
+          "tech": "<strong>Python, Plotly</strong>",
+          "details": [
+            "Wrote library for volumetric composition transformations across disparate spatial models."
+          ]
+        },
+        {
+          "scope": "Strategic Planning",
+          "details": [
+            "Led technical planning and roadmap delivery with internal and external stakeholders."
+          ]
+        },
+        {
+          "scope": "Collaborative Delivery",
+          "tech": "<strong>Docker, Kubernetes, Azure</strong>",
+          "details": [
+            "Managed containerized artifact delivery and technical synchronizations with client teams."
+          ]
+        }
+      ]
     },
     {
       "jobTitle": "Full Stack Engineer",
@@ -207,42 +206,41 @@
       "jobTitle": "Junior Software Developer",
       "time": "2018",
       "duration": "6 months",
-      "company": "Aplicaciones En Informática Avanzada",
+      "company": "Aplicaciones En Inform\u00e1tica Avanzada",
       "department": "Data Analytics Innovations",
       "location": "Sant Cugat, Spain",
       "remote": false,
       "unifiedScope": "Applied Data Systems",
-          "responsibilities": [
-            {
-              "scope": "Model Orchestration",
-              "tech": "<strong>Python, Django, Docker</strong>",
-              "details": [
-                "Architected containerized services to orchestrate and deploy predictive model runs."
-              ]
-            },
-            {
-              "scope": "Data Extrapolation",
-              "tech": "<strong>Python, numpy, pandas</strong>",
-              "details": [
-                "Developed data extrapolation logic to map user configurations to model inputs."
-              ]
-            },
-            {
-              "scope": "Bioscience Analytics",
-              "tech": "<strong>Java, JSP</strong>",
-              "details": [
-                "Built UI systems and automated document generation for bioscience analytics tools."
-              ]
-            },
-            {
-              "scope": "Data Visualization",
-              "tech": "<strong>D3, Plotly</strong>",
-              "details": [
-                "Designed reusable visualization components for application UIs and data reporting."
-              ]
-            }
+      "responsibilities": [
+        {
+          "scope": "Model Orchestration",
+          "tech": "<strong>Python, Django, Docker</strong>",
+          "details": [
+            "Architected containerized services to orchestrate and deploy predictive model runs."
           ]
-      
+        },
+        {
+          "scope": "Data Extrapolation",
+          "tech": "<strong>Python, numpy, pandas</strong>",
+          "details": [
+            "Developed data extrapolation logic to map user configurations to model inputs."
+          ]
+        },
+        {
+          "scope": "Bioscience Analytics",
+          "tech": "<strong>Java, JSP</strong>",
+          "details": [
+            "Built UI systems and automated document generation for bioscience analytics tools."
+          ]
+        },
+        {
+          "scope": "Data Visualization",
+          "tech": "<strong>D3, Plotly</strong>",
+          "details": [
+            "Designed reusable visualization components for application UIs and data reporting."
+          ]
+        }
+      ]
     },
     {
       "jobTitle": "Senior Mutual Fund Accountant",
@@ -330,27 +328,45 @@
   },
   "projects": [
     {
-      "title": "Multimedia Platform",
-      "name": "Gamespark",
-      "url": "https://gamespark.app/",
+      "title": "AI Game Platform",
+      "name": "Game Tsunami",
+      "url": "https://gametsunami.com/",
+      "platforms": ["apple-white", "android-white", "globe-white"],
       "hidden": false
     },
     {
-      "title": "Mobile Application",
+      "title": "Weather App",
       "name": "Weatherie",
       "url": "http://www.weatherie.com",
+      "platforms": ["apple-white", "android-white"],
       "hidden": false
     },
     {
       "title": "Puzzle Game",
       "name": "Cruffled",
       "url": "https://www.cruffled.com",
+      "platforms": ["apple-white", "android-white"],
       "hidden": false
     },
     {
-      "title": "Arcade Game",
-      "omit-name": "Square Game",
-      "url": "https://https://squares-b05d9.web.app",
+      "title": "Audio Platform",
+      "name": "Audio Tales",
+      "url": "https://tales.audio",
+      "platforms": ["apple-white", "android-white"],
+      "hidden": false
+    },
+    {
+      "title": "Puzzle Game",
+      "name": "Square Swaps",
+      "url": "https://squares-b05d9.web.app",
+      "platforms": ["apple-white", "android-white"],
+      "hidden": false
+    },
+    {
+      "title": "Android Launcher",
+      "name": "Section Launcher",
+      "url": "https://play.google.com/store/apps/details?id=com.sectionlauncher.app",
+      "platforms": ["android-white"],
       "hidden": true
     }
   ]
