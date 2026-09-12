@@ -330,7 +330,7 @@
     {
       "title": "AI Game Platform",
       "name": "GameTsunami",
-      "url": "https://gametsunami.app/",
+      "url": "https://gametsunami.com",
       "platforms": ["apple-white", "android-white", "globe-white"],
       "hidden": false
     },
@@ -358,16 +358,16 @@
     {
       "title": "Puzzle Game",
       "name": "Square Swaps",
-      "url": "https://squares-b05d9.web.app",
+      "url": "https://squareswaps.com",
       "platforms": ["apple-white", "android-white"],
       "hidden": false
     },
     {
       "title": "Android Launcher",
       "name": "Section Launcher",
-      "url": "https://play.google.com/store/apps/details?id=com.sectionlauncher.app",
+      "url": "https://sectionlauncher.com",
       "platforms": ["android-white"],
-      "hidden": true
+      "hidden": false
     }
   ]
 }
