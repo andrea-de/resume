@@ -337,14 +337,14 @@
     {
       "title": "Weather App",
       "name": "Weatherie",
-      "url": "http://www.weatherie.com",
+      "url": "https://weatherie.com",
       "platforms": ["apple-white", "android-white"],
       "hidden": false
     },
     {
       "title": "Puzzle Game",
       "name": "Cruffled",
-      "url": "https://www.cruffled.com",
+      "url": "https://cruffled.com",
       "platforms": ["apple-white", "android-white"],
       "hidden": false
     },
