@@ -361,13 +361,6 @@
       "url": "https://squareswaps.com",
       "platforms": ["apple-white", "android-white"],
       "hidden": false
-    },
-    {
-      "title": "Android Launcher",
-      "name": "Section Launcher",
-      "url": "https://sectionlauncher.com",
-      "platforms": ["android-white"],
-      "hidden": false
     }
   ]
 }
