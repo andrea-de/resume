@@ -329,8 +329,8 @@
   "projects": [
     {
       "title": "AI Game Platform",
-      "name": "Game Tsunami",
-      "url": "https://gametsunami.com/",
+      "name": "GameTsunami",
+      "url": "https://gametsunami.app/",
       "platforms": ["apple-white", "android-white", "globe-white"],
       "hidden": false
     },
