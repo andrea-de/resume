@@ -553,6 +553,13 @@
                             const ref = urlParams.get("ref");
                             const job = urlParams.get("job");
 
+                            // ?region=eu prints the European version (cv.pdf): contact
+                            // entries tagged with a region show only in that version.
+                            const region = urlParams.get("region") || "us";
+                            this.resume.contact = (this.resume.contact || []).filter(
+                                (c) => !c.region || c.region === region,
+                            );
+
                             const updateLinks = (obj) => {
                                 if (obj.href && obj.href.includes("andrea-dev.com")) {
                                     if (ref) {

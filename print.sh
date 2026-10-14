@@ -32,17 +32,23 @@ SERVER_PID=$!
 # Wait a moment for the server to be ready
 sleep 2
 
-# Generate the PDF using headless Chrome
-echo "Generating resume.pdf..."
-"$CHROME_BIN" --no-sandbox --headless --disable-gpu --print-to-pdf=resume.pdf --no-margins --virtual-time-budget=5000 "http://localhost:$PORT/index.html" 2>/dev/null
+# print_version <name> <query>: <name>.pdf and <name>-preview.png from index.html?<query>
+print_version() {
+    local NAME=$1 URL="http://localhost:$PORT/index.html${2:+?$2}"
+    echo "Generating $NAME.pdf..."
+    "$CHROME_BIN" --no-sandbox --headless --disable-gpu --print-to-pdf="$NAME.pdf" --no-margins --virtual-time-budget=5000 "$URL" 2>/dev/null
 
-# Generate high-resolution preview PNG
-echo "Generating resume-preview.png..."
-if command -v pdftoppm &> /dev/null; then
-    pdftoppm resume.pdf resume-preview -png -rx 300 -ry 300 -singlefile
-else
-    "$CHROME_BIN" --no-sandbox --headless --screenshot=resume-preview.png --window-size=1200,1650 --virtual-time-budget=5000 "http://localhost:$PORT/index.html" 2>/dev/null
-fi
+    echo "Generating $NAME-preview.png..."
+    if command -v pdftoppm &> /dev/null; then
+        pdftoppm "$NAME.pdf" "$NAME-preview" -png -rx 300 -ry 300 -singlefile
+    else
+        "$CHROME_BIN" --no-sandbox --headless --screenshot="$NAME-preview.png" --window-size=1200,1650 --virtual-time-budget=5000 "$URL" 2>/dev/null
+    fi
+}
+
+# The US version, and the European one (Spanish number) for visitors in Europe.
+print_version resume
+print_version cv "region=eu"
 
 # Clean up
 if [ ! -z "$SERVER_PID" ]; then
@@ -50,5 +56,5 @@ if [ ! -z "$SERVER_PID" ]; then
 fi
 
 echo "---------------------------------"
-echo "Done! Saved to: resume.pdf and resume-preview.png"
+echo "Done! Saved resume.pdf and cv.pdf, each with a -preview.png"
 echo "---------------------------------"

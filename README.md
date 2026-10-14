@@ -30,6 +30,14 @@ You can generate a PDF and a high-quality PNG preview in one command. This scrip
 ./print.sh
 ```
 
+This prints two versions from the same `resume.json`:
+- `resume.pdf` / `resume-preview.png`: the US version, with the US phone number.
+- `cv.pdf` / `cv-preview.png`: the European version, with the Spanish phone number
+  (`index.html?region=eu`). andreadecandia.com serves it to visitors in Europe.
+
+A contact entry with `"region": "us"` or `"region": "eu"` shows only in that version;
+entries without a region show in both.
+
 ### Generate a custom version for tracking:
 This will append tracking parameters to your website links (`?utm_source=resume&utm_campaign=REF_NAME`).
 

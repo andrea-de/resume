@@ -31,7 +31,14 @@
     {
       "icon": "phone-img",
       "href": "tel:+12019612208",
-      "text": "+1 (201) 961 2208"
+      "text": "+1 (201) 961 2208",
+      "region": "us"
+    },
+    {
+      "icon": "phone-img",
+      "href": "tel:+34617797911",
+      "text": "+34 617 797 911",
+      "region": "eu"
     }
   ],
   "workExperience": [
