@@ -376,8 +376,8 @@
       { "id": "android", "icon": "android-white", "value": "6", "caption": "Android", "label": "6 Android apps on Google Play" },
       { "id": "ios", "icon": "apple-white", "value": "4", "caption": "iOS", "label": "4 iOS apps on the App Store, 2 live and 2 in review" },
       { "id": "steam", "icon": "steam-white", "value": "0", "caption": "Steam", "label": "Games live on Steam" },
-      { "id": "web", "icon": "globe-white", "value": "3", "caption": "Web apps", "label": "3 web apps people can use in the browser: Cruffled, GameTsunami and the Weatherie demo" },
-      { "id": "soon", "icon": "rocket-white", "value": "6", "caption": "Coming soon", "label": "6 more products coming soon" }
+      { "id": "web", "icon": "globe-white", "value": "15", "caption": "Web", "label": "15 live websites and web apps" },
+      { "id": "pipeline", "icon": "rocket-white", "value": "8", "caption": "Pipeline", "label": "8 more apps in the release pipeline" }
     ]
   }
 }
