@@ -6,6 +6,9 @@ resume-*-preview.png
 !resume.pdf
 !resume-preview.png
 
+# Temporary logo copied in by ref-print.sh while printing
+.qr-logo-*
+
 # System / Editor
 .DS_Store
 node_modules/

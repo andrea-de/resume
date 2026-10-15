@@ -118,35 +118,22 @@
                 text-decoration: none !important;
             }
 
-            .initials-box {
-                position: relative;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 120px;
-                height: 120px;
-                background: rgba(255, 255, 255, 0.1);
-                border: 4px solid #fff;
-                font-family: "Montserrat", sans-serif;
-                font-weight: 900;
-                font-size: 3.8em;
-                color: #fff;
-                margin-bottom: 0.3em;
-                letter-spacing: -0.05em;
-                border-radius: 2px;
+            /* QR tile: same footprint as the old 120px + 4px-border initials box */
+            .qr-tile {
+                display: block;
+                width: 128px;
+                height: 128px;
+                margin-bottom: 1.14em; /* the old box's 0.3em at its 3.8em font size */
+                background: #fff;
+                border-radius: 12px;
                 overflow: hidden;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
             }
 
-            .initials-box::after {
-                content: "";
-                position: absolute;
-                bottom: 0;
-                right: 0;
-                width: 0;
-                height: 0;
-                border-style: solid;
-                border-width: 0 0 20px 60px;
-                border-color: transparent transparent #fff transparent;
+            .qr-tile svg {
+                display: block;
+                width: 100%;
+                height: 100%;
             }
 
             .sidebar h2 {
@@ -306,8 +293,14 @@
                 <!-- Side Column - Info -->
                 <div class="sidebar text-left">
                     <section class="info pt-1 pb-1">
-                        <!-- Monogram -->
-                        <div class="initials-box" v-text="resume.personalInfo?.initials"></div>
+                        <!-- QR code to the site (or a personal /r/<code> link), see qrTarget() -->
+                        <a
+                            v-if="qr.svg"
+                            :href="qr.url"
+                            class="qr-tile"
+                            :title="qr.url"
+                            v-html="qr.svg"
+                        ></a>
 
                         <!-- Name -->
                         <h1 class="mt-1  ml-1 mb-1 leading-tight text-[2.5em] font-montserrat font-extrabold tracking-tight text-left">
@@ -532,11 +525,133 @@
             </div>
         </div>
 
+        <!-- QR encoder (Kazuhiko Arase's qrcode-generator 1.4.4, MIT), vendored -->
+        <script src="src/vendor/qrcode.js"></script>
         <script>
+            const QR_SITE = "https://www.andreadecandia.com";
+            const QR_DEFAULT_COLOR = "#134e4a"; // teal-900, ~9.9:1 on white
+            const QR_FALLBACK_COLOR = "#111111";
+            const QR_QUIET = 4; // quiet zone, in modules
+
+            // What the QR encodes: ?code=k7q -> /r/k7q, otherwise the site with the
+            // résumé UTM tag (+ utm_campaign when ?ref= is set).
+            function qrTarget(params) {
+                const code = params.get("code");
+                if (code) {
+                    if (/^[a-z0-9]{3}$/.test(code)) return `${QR_SITE}/r/${code}`;
+                    console.warn(`QR: ignoring code "${code}" (want 3 lowercase letters/digits)`);
+                }
+                const ref = params.get("ref");
+                return `${QR_SITE}/?utm_source=resume` +
+                    (ref ? `&utm_campaign=${encodeURIComponent(ref)}` : "");
+            }
+
+            // WCAG contrast ratio of a #rrggbb color against white.
+            function contrastOnWhite(hex) {
+                const lum = [1, 3, 5]
+                    .map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
+                    .map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+                const L = 0.2126 * lum[0] + 0.7152 * lum[1] + 0.0722 * lum[2];
+                return 1.05 / (L + 0.05);
+            }
+
+            // ?qrColor=0b5fff (no #). Too light to scan (< 4.5:1 on white) -> near-black.
+            function qrColor(raw) {
+                if (!raw) return QR_DEFAULT_COLOR;
+                const hex = "#" + raw.replace(/^#/, "").toLowerCase();
+                if (!/^#[0-9a-f]{6}$/.test(hex)) {
+                    console.warn(`QR: qrColor "${raw}" is not a 6-digit hex; using ${QR_FALLBACK_COLOR}`);
+                    return QR_FALLBACK_COLOR;
+                }
+                const ratio = contrastOnWhite(hex);
+                if (ratio < 4.5) {
+                    console.warn(`QR: qrColor ${hex} has contrast ${ratio.toFixed(2)}:1 on white (< 4.5); using ${QR_FALLBACK_COLOR}`);
+                    return QR_FALLBACK_COLOR;
+                }
+                return hex;
+            }
+
+            const escAttr = (v) => String(v).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+
+            // Inline SVG from the module matrix: dot modules, rounded finder eyes, and
+            // an optional center logo on a white pad (error correction H when used).
+            function buildQrSvg(text, { color = QR_DEFAULT_COLOR, logo = null, square = false } = {}) {
+                const qr = qrcode(0, logo ? "H" : "M");
+                qr.addData(text);
+                qr.make();
+                const n = qr.getModuleCount();
+                const q = QR_QUIET;
+                const size = n + 2 * q;
+
+                // Logo pad: odd module count, <= 22% of the QR width, centered on the grid.
+                let pad = null;
+                if (logo) {
+                    let m = Math.floor(n * 0.22);
+                    if (m % 2 === 0) m -= 1;
+                    const start = (n - m) / 2;
+                    pad = { start, end: start + m, m };
+                }
+
+                const inFinder = (r, c) =>
+                    (r < 7 && c < 7) || (r < 7 && c >= n - 7) || (r >= n - 7 && c < 7);
+                const inPad = (r, c) =>
+                    pad && r >= pad.start - 0.5 && r < pad.end + 0.5 &&
+                    c >= pad.start - 0.5 && c < pad.end + 0.5;
+
+                const roundRect = (x, y, w, h, r) =>
+                    `M${x + r},${y}h${w - 2 * r}a${r},${r} 0 0 1 ${r},${r}v${h - 2 * r}` +
+                    `a${r},${r} 0 0 1 -${r},${r}h-${w - 2 * r}a${r},${r} 0 0 1 -${r},-${r}` +
+                    `v-${h - 2 * r}a${r},${r} 0 0 1 ${r},-${r}z`;
+
+                let dots = "";
+                for (let r = 0; r < n; r++) {
+                    for (let c = 0; c < n; c++) {
+                        if (!qr.isDark(r, c) || inFinder(r, c) || inPad(r, c)) continue;
+                        if (square) {
+                            dots += `M${c + q},${r + q}h1v1h-1z`;
+                            continue;
+                        }
+                        // A circle as a path: two arcs, radius 0.45 module.
+                        const cx = c + q + 0.5, cy = r + q + 0.5;
+                        dots += `M${cx - 0.45},${cy}a0.45,0.45 0 1 0 0.9,0a0.45,0.45 0 1 0 -0.9,0z`;
+                    }
+                }
+
+                let eyes = "";
+                for (const [r, c] of [[0, 0], [0, n - 7], [n - 7, 0]]) {
+                    const x = c + q, y = r + q;
+                    // Softly rounded ring, round-cornered pupil. Rounder outer rings
+                    // (r >= ~0.7) stop some decoders (OpenCV) from locating the code.
+                    const [r1, r2, r3] = square ? [0, 0, 0] : [0.5, 0.3, 0.8];
+                    eyes += roundRect(x, y, 7, 7, r1) + roundRect(x + 1, y + 1, 5, 5, r2);
+                    eyes += roundRect(x + 2, y + 2, 3, 3, r3);
+                }
+
+                let logoSvg = "";
+                if (pad) {
+                    const x = pad.start + q, w = pad.m;
+                    logoSvg =
+                        `<rect x="${x}" y="${x}" width="${w}" height="${w}" rx="1.2" fill="#fff"/>` +
+                        `<image href="${escAttr(logo)}" x="${x + 0.6}" y="${x + 0.6}" ` +
+                        `width="${w - 1.2}" height="${w - 1.2}" preserveAspectRatio="xMidYMid meet"/>`;
+                }
+
+                return (
+                    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" ` +
+                    `role="img" aria-label="QR code: ${escAttr(text)}">` +
+                    `<rect width="${size}" height="${size}" fill="#fff"/>` +
+                    `<path fill="${color}" d="${dots}"/>` +
+                    `<path fill="${color}" fill-rule="evenodd" d="${eyes}"/>` +
+                    logoSvg +
+                    `</svg>`
+                );
+            }
+
             function ResumeApp() {
                 return {
                     resume: {},
                     icons: {},
+                    qr: { url: "", svg: "" },
 
                     async loadResume() {
                         try {
@@ -552,6 +667,17 @@
                             const urlParams = new URLSearchParams(window.location.search);
                             const ref = urlParams.get("ref");
                             const job = urlParams.get("job");
+
+                            // QR in the top-left: ?code=, ?ref=, ?qrColor=, ?qrLogo=
+                            const qrUrl = qrTarget(urlParams);
+                            this.qr = {
+                                url: qrUrl,
+                                svg: buildQrSvg(qrUrl, {
+                                    color: qrColor(urlParams.get("qrColor")),
+                                    logo: urlParams.get("qrLogo"),
+                                    square: urlParams.get("qrStyle") === "square",
+                                }),
+                            };
 
                             // ?region=eu prints the European version (cv.pdf): contact
                             // entries tagged with a region show only in that version.
