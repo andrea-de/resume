@@ -33,5 +33,7 @@
   "web-platform-img": "src/icons/web.png",
   "apple-white": "src/icons/apple-white.webp",
   "android-white": "src/icons/android-white.png",
-  "globe-white": "src/icons/globe-white.png"
+  "globe-white": "src/icons/globe-white.png",
+  "rocket-white": "src/icons/rocket-white.svg",
+  "steam-white": "src/icons/steam-white.svg"
 }

@@ -104,6 +104,7 @@
                 padding: 0.6em 0;
                 padding-left: 0.8em;
                 padding-right: 0.8em;
+                position: relative;
             }
 
             .sidebar a {
@@ -118,14 +119,14 @@
                 text-decoration: none !important;
             }
 
-            /* QR tile: same footprint as the old 120px + 4px-border initials box */
+            /* QR tile: the full width of the sidebar column, square */
             .qr-tile {
                 display: block;
-                width: 128px;
-                height: 128px;
-                margin-bottom: 1.14em; /* the old box's 0.3em at its 3.8em font size */
+                width: 100%;
+                aspect-ratio: 1;
+                margin-bottom: 1em;
                 background: #fff;
-                border-radius: 12px;
+                border-radius: 14px;
                 overflow: hidden;
                 box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
             }
@@ -162,6 +163,56 @@
             .sidebar .school-name {
                 font-size: 1.15em;
                 font-weight: 700;
+            }
+
+            /* Counter pills (resume.stats): a grid of 3 equal pills per row, wrapping;
+               icon + number on top, the caption under it */
+            .stat-pills {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                grid-auto-rows: 1fr;
+                gap: 0.35em;
+                margin: 0.5em 0 0;
+            }
+
+            .stat-pill {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 0.4em 0.1em 0.32em;
+                border: 1px solid rgba(255, 255, 255, 0.35);
+                border-radius: 10px;
+                background: rgba(255, 255, 255, 0.14);
+                white-space: nowrap;
+                text-align: center;
+            }
+
+            .stat-main {
+                display: flex;
+                align-items: center;
+                gap: 0.25em;
+            }
+
+            .stat-value {
+                font-family: "Montserrat", sans-serif;
+                font-weight: 800;
+                font-size: 1.15em;
+                line-height: 1;
+                font-variant-numeric: tabular-nums;
+            }
+
+            .stat-plus {
+                font-size: 0.7em;
+                vertical-align: 0.3em;
+            }
+
+            .stat-caption {
+                margin-top: 0.25em;
+                font-size: 0.66em;
+                font-weight: 700;
+                line-height: 1;
+                opacity: 0.88;
             }
 
             .dept::before {
@@ -388,35 +439,32 @@
                         </div>
                     </section>
 
-                    <!-- Products / Projects -->
-                    <h2 class="font-montserrat font-medium uppercase">
-                        Products
-                    </h2>
-                    <section v-if="resume.projects">
-                        <div class="pb-4 ml-2">
-                            <ul>
-                                <li
-                                    v-for="(project, index) in resume.projects"
-                                    :key="index"
-                                    v-show="!project.hidden"
-                                    class="mb-2.5 flex items-center justify-between"
-                                >
-                                    <a
-                                        :href="project.url"
-                                        class="project-link font-bold border-b border-white/30 hover:border-white/60 transition-colors no-underline"
-                                        v-text="project.name"
-                                    ></a>
-                                    <span v-if="project.platforms" class="flex items-center gap-1.5 ml-2">
-                                        <span
-                                            v-for="(platform, pIndex) in project.platforms"
-                                            :key="pIndex"
-                                            :style="getIconStyle(platform, { size: 0.85 })"
-                                        ></span>
-                                    </span>
-                                </li>
-                            </ul>
-                        </div>
-                    </section>
+                    <!-- Products: counter pills from resume.stats.items (a pill whose value is 0 or
+                         empty is hidden). ?statsCaptions=0 drops the captions.
+                         resume.projects (the old product list) is kept in the JSON but no longer shown. -->
+                    <template v-if="stats.items.length">
+                        <h2 class="font-montserrat font-medium uppercase" v-text="stats.heading"></h2>
+                        <ul class="stat-pills mb-2">
+                            <li
+                                v-for="stat in stats.items"
+                                :key="stat.id"
+                                class="stat-pill"
+                                :title="stat.label"
+                            >
+                                <span class="sr-only" v-text="stat.label"></span>
+                                <span class="stat-main" aria-hidden="true">
+                                    <span :style="getIconStyle(stat.icon, { size: 1 })"></span>
+                                    <span class="stat-value"><span v-text="String(stat.value).replace(/\+$/, '')"></span><span v-if="String(stat.value).endsWith('+')" class="stat-plus">+</span></span>
+                                </span>
+                                <span
+                                    v-if="stats.captions && stat.caption"
+                                    class="stat-caption"
+                                    aria-hidden="true"
+                                    v-text="stat.caption"
+                                ></span>
+                            </li>
+                        </ul>
+                    </template>
                 </div>
 
                 <!-- Main Column - Work Experience -->
@@ -532,6 +580,16 @@
             const QR_DEFAULT_COLOR = "#134e4a"; // teal-900, ~9.9:1 on white
             const QR_FALLBACK_COLOR = "#111111";
             const QR_QUIET = 4; // quiet zone, in modules
+            // Logo-in-dots style (?qrShape=): finder eyes and the dark modules outside the shape
+            const QR_EYE_COLOR = "#27272a"; // zinc-800
+            const QR_OUTSIDE_COLOR = "#52525b"; // zinc-600
+            // Dots outside the shape are smaller, so the shape reads. Below ~0.4 they blur away
+            // first: at 0.32 zxing failed on blurred / tilted renders the 0.4 dots survive.
+            const QR_OUTSIDE_RADIUS = 0.4;
+            const QR_FALLBACK_TINT = "#e4e4e7"; // zinc-200, the tint when the brand color is too light
+            const QR_SHAPE_VERSION = 7; // 45x45 modules: enough for a smooth silhouette
+            const QR_SHAPE_SPAN = 0.9; // the shape spans 90% of the module grid
+            const QR_SHAPE_TINT = 0.78; // light modules inside: brand color mixed with 78% white
 
             // What the QR encodes: ?code=k7q -> /r/k7q, otherwise the site with the
             // résumé UTM tag (+ utm_campaign when ?ref= is set).
@@ -571,49 +629,165 @@
                 return hex;
             }
 
+            // Mix a #rrggbb color with white; `white` is the share of white (0..1).
+            function mixWithWhite(hex, white) {
+                return "#" + [1, 3, 5]
+                    .map((i) => parseInt(hex.slice(i, i + 2), 16))
+                    .map((c) => Math.round(c + (255 - c) * white).toString(16).padStart(2, "0"))
+                    .join("");
+            }
+
+            // The silhouette for the logo-in-dots style: an SVG or PNG (its alpha, or its
+            // darkness when the image is opaque), cropped to the shape's bounding box, scaled
+            // to span QR_SHAPE_SPAN of the n x n module grid and centered, rasterized at `px`
+            // pixels per module. Returns inside(r, c): true when over half the module is covered.
+            async function loadQrShape(src, n, px = 16) {
+                let url = src, revoke = null;
+                if (/\.svg(\?|#|$)/i.test(src) || src.startsWith("data:image/svg")) {
+                    // Give the SVG a large intrinsic size so it rasterizes sharply.
+                    const doc = new DOMParser().parseFromString(await (await fetch(src)).text(), "image/svg+xml");
+                    const root = doc.documentElement;
+                    let [, , vw, vh] = (root.getAttribute("viewBox") || "").split(/[\s,]+/).map(Number);
+                    if (!vw || !vh) [vw, vh] = [parseFloat(root.getAttribute("width")) || 100, parseFloat(root.getAttribute("height")) || 100];
+                    root.setAttribute("width", Math.round(1024 * (vw / Math.max(vw, vh))));
+                    root.setAttribute("height", Math.round(1024 * (vh / Math.max(vw, vh))));
+                    url = revoke = URL.createObjectURL(
+                        new Blob([new XMLSerializer().serializeToString(doc)], { type: "image/svg+xml" }),
+                    );
+                }
+                const img = new Image();
+                img.crossOrigin = "anonymous";
+                img.src = url;
+                try {
+                    await img.decode();
+                } finally {
+                    if (revoke) URL.revokeObjectURL(revoke);
+                }
+
+                // 1. The image as a coverage mask (alpha = how much of the shape each pixel is).
+                const iw = img.naturalWidth, ih = img.naturalHeight;
+                const source = document.createElement("canvas");
+                source.width = iw;
+                source.height = ih;
+                const sctx = source.getContext("2d", { willReadFrequently: true });
+                sctx.drawImage(img, 0, 0);
+                const pixels = sctx.getImageData(0, 0, iw, ih); // throws on a tainted canvas
+                const d = pixels.data;
+                let opaque = true;
+                for (let i = 3; i < d.length; i += 4) if (d[i] < 250) { opaque = false; break; }
+                let x0 = iw, y0 = ih, x1 = -1, y1 = -1;
+                for (let y = 0; y < ih; y++) {
+                    for (let x = 0; x < iw; x++) {
+                        const i = (y * iw + x) * 4;
+                        const cover = opaque
+                            ? 255 - (0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2])
+                            : d[i + 3];
+                        d[i] = d[i + 1] = d[i + 2] = 0;
+                        d[i + 3] = cover;
+                        if (cover > 25) {
+                            if (x < x0) x0 = x;
+                            if (x > x1) x1 = x;
+                            if (y < y0) y0 = y;
+                            if (y > y1) y1 = y;
+                        }
+                    }
+                }
+                if (x1 < 0) throw new Error("the shape is empty");
+                sctx.putImageData(pixels, 0, 0);
+
+                // 2. Its bounding box, fitted into the grid.
+                const W = n * px, bw = x1 - x0 + 1, bh = y1 - y0 + 1;
+                const k = (W * QR_SHAPE_SPAN) / Math.max(bw, bh);
+                const grid = document.createElement("canvas");
+                grid.width = grid.height = W;
+                const gctx = grid.getContext("2d", { willReadFrequently: true });
+                gctx.drawImage(source, x0, y0, bw, bh, (W - bw * k) / 2, (W - bh * k) / 2, bw * k, bh * k);
+                const g = gctx.getImageData(0, 0, W, W).data;
+
+                // 3. One flag per module: covered more than half.
+                const inside = [];
+                for (let r = 0; r < n; r++) {
+                    const row = [];
+                    for (let c = 0; c < n; c++) {
+                        let sum = 0;
+                        for (let y = r * px; y < (r + 1) * px; y++)
+                            for (let x = c * px; x < (c + 1) * px; x++) sum += g[(y * W + x) * 4 + 3];
+                        row.push(sum / (255 * px * px) > 0.5);
+                    }
+                    inside.push(row);
+                }
+                return (r, c) => inside[r][c];
+            }
+
             const escAttr = (v) => String(v).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
-            // Inline SVG from the module matrix: dot modules, rounded finder eyes, and
-            // an optional center logo on a white pad (error correction H when used).
-            function buildQrSvg(text, { color = QR_DEFAULT_COLOR, logo = null, square = false } = {}) {
-                const qr = qrcode(0, logo ? "H" : "M");
-                qr.addData(text);
-                qr.make();
+            // Inline SVG from the module matrix: dot modules and rounded finder eyes, error
+            // correction M. `shape` (an SVG/PNG silhouette) switches to the logo-in-dots style: version 7,
+            // error correction H, and the dots inside the silhouette drawn in the brand color.
+            async function buildQrSvg(text, { color = QR_DEFAULT_COLOR, shape = null, square = false } = {}) {
+                let qr = null;
+                for (let v = shape ? QR_SHAPE_VERSION : 0; !qr; v++) {
+                    // Too much data for this version -> try the next one up.
+                    try {
+                        const candidate = qrcode(v, shape ? "H" : "M");
+                        candidate.addData(text);
+                        candidate.make();
+                        qr = candidate;
+                    } catch (e) {
+                        if (!v || v >= 40) throw e;
+                    }
+                }
                 const n = qr.getModuleCount();
                 const q = QR_QUIET;
                 const size = n + 2 * q;
 
-                // Logo pad: odd module count, <= 22% of the QR width, centered on the grid.
-                let pad = null;
-                if (logo) {
-                    let m = Math.floor(n * 0.22);
-                    if (m % 2 === 0) m -= 1;
-                    const start = (n - m) / 2;
-                    pad = { start, end: start + m, m };
+                let inside = null, tint = null;
+                if (shape) {
+                    try {
+                        inside = await loadQrShape(shape, n);
+                        tint = color === QR_FALLBACK_COLOR ? QR_FALLBACK_TINT : mixWithWhite(color, QR_SHAPE_TINT);
+                    } catch (e) {
+                        console.warn(`QR: could not read the shape "${shape}" (${e.message}); drawing a plain code`);
+                    }
                 }
 
                 const inFinder = (r, c) =>
                     (r < 7 && c < 7) || (r < 7 && c >= n - 7) || (r >= n - 7 && c < 7);
-                const inPad = (r, c) =>
-                    pad && r >= pad.start - 0.5 && r < pad.end + 0.5 &&
-                    c >= pad.start - 0.5 && c < pad.end + 0.5;
 
                 const roundRect = (x, y, w, h, r) =>
                     `M${x + r},${y}h${w - 2 * r}a${r},${r} 0 0 1 ${r},${r}v${h - 2 * r}` +
                     `a${r},${r} 0 0 1 -${r},${r}h-${w - 2 * r}a${r},${r} 0 0 1 -${r},-${r}` +
                     `v-${h - 2 * r}a${r},${r} 0 0 1 ${r},-${r}z`;
 
-                let dots = "";
+                // A circle as a path: two arcs.
+                const dot = (r, c, rad) => {
+                    const cx = c + q + 0.5, cy = r + q + 0.5;
+                    return `M${cx - rad},${cy}a${rad},${rad} 0 1 0 ${2 * rad},0a${rad},${rad} 0 1 0 -${2 * rad},0z`;
+                };
+                // The finders plus their one-module light separator.
+                const nearFinder = (r, c) =>
+                    (r < 8 && c < 8) || (r < 8 && c >= n - 8) || (r >= n - 8 && c < 8);
+
+                let dots = "", outsideDots = "", tintDots = "";
                 for (let r = 0; r < n; r++) {
                     for (let c = 0; c < n; c++) {
-                        if (!qr.isDark(r, c) || inFinder(r, c) || inPad(r, c)) continue;
+                        if (inFinder(r, c)) continue;
+                        const dark = qr.isDark(r, c);
+                        if (inside) {
+                            // Logo-in-dots: brand dots inside the shape, small grey dots outside,
+                            // pale tint dots on the light modules inside.
+                            const isIn = inside(r, c);
+                            if (dark && isIn) dots += dot(r, c, 0.5);
+                            else if (dark) outsideDots += dot(r, c, QR_OUTSIDE_RADIUS);
+                            else if (isIn && !nearFinder(r, c)) tintDots += dot(r, c, 0.5);
+                            continue;
+                        }
+                        if (!dark) continue;
                         if (square) {
                             dots += `M${c + q},${r + q}h1v1h-1z`;
                             continue;
                         }
-                        // A circle as a path: two arcs, radius 0.45 module.
-                        const cx = c + q + 0.5, cy = r + q + 0.5;
-                        dots += `M${cx - 0.45},${cy}a0.45,0.45 0 1 0 0.9,0a0.45,0.45 0 1 0 -0.9,0z`;
+                        dots += dot(r, c, 0.48); // 0.45 failed OpenCV at 300 dpi on the large tile
                     }
                 }
 
@@ -627,22 +801,14 @@
                     eyes += roundRect(x + 2, y + 2, 3, 3, r3);
                 }
 
-                let logoSvg = "";
-                if (pad) {
-                    const x = pad.start + q, w = pad.m;
-                    logoSvg =
-                        `<rect x="${x}" y="${x}" width="${w}" height="${w}" rx="1.2" fill="#fff"/>` +
-                        `<image href="${escAttr(logo)}" x="${x + 0.6}" y="${x + 0.6}" ` +
-                        `width="${w - 1.2}" height="${w - 1.2}" preserveAspectRatio="xMidYMid meet"/>`;
-                }
-
                 return (
                     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" ` +
                     `role="img" aria-label="QR code: ${escAttr(text)}">` +
                     `<rect width="${size}" height="${size}" fill="#fff"/>` +
+                    (tintDots ? `<path fill="${tint}" d="${tintDots}"/>` : "") +
+                    (outsideDots ? `<path fill="${QR_OUTSIDE_COLOR}" d="${outsideDots}"/>` : "") +
                     `<path fill="${color}" d="${dots}"/>` +
-                    `<path fill="${color}" fill-rule="evenodd" d="${eyes}"/>` +
-                    logoSvg +
+                    `<path fill="${inside ? QR_EYE_COLOR : color}" fill-rule="evenodd" d="${eyes}"/>` +
                     `</svg>`
                 );
             }
@@ -652,6 +818,7 @@
                     resume: {},
                     icons: {},
                     qr: { url: "", svg: "" },
+                    stats: { heading: "", items: [], captions: true },
 
                     async loadResume() {
                         try {
@@ -668,13 +835,22 @@
                             const ref = urlParams.get("ref");
                             const job = urlParams.get("job");
 
-                            // QR in the top-left: ?code=, ?ref=, ?qrColor=, ?qrLogo=
+                            // Products pills, after Education: hidden while a value is 0 or empty
+                            this.stats = {
+                                heading: this.resume.stats?.heading || "Products",
+                                items: (this.resume.stats?.items || []).filter(
+                                    (s) => s.value !== undefined && s.value !== null && !/^\s*0*\s*$/.test(String(s.value)),
+                                ),
+                                captions: urlParams.get("statsCaptions") !== "0",
+                            };
+
+                            // QR in the top-left: ?code=, ?ref=, ?qrColor=, ?qrShape=
                             const qrUrl = qrTarget(urlParams);
                             this.qr = {
                                 url: qrUrl,
-                                svg: buildQrSvg(qrUrl, {
+                                svg: await buildQrSvg(qrUrl, {
                                     color: qrColor(urlParams.get("qrColor")),
-                                    logo: urlParams.get("qrLogo"),
+                                    shape: urlParams.get("qrShape"),
                                     square: urlParams.get("qrStyle") === "square",
                                 }),
                             };

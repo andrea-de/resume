@@ -369,5 +369,15 @@
       "platforms": ["apple-white", "android-white"],
       "hidden": false
     }
-  ]
+  ],
+  "stats": {
+    "heading": "Products",
+    "items": [
+      { "id": "android", "icon": "android-white", "value": "6", "caption": "Android", "label": "6 Android apps on Google Play" },
+      { "id": "ios", "icon": "apple-white", "value": "4", "caption": "iOS", "label": "4 iOS apps on the App Store, 2 live and 2 in review" },
+      { "id": "steam", "icon": "steam-white", "value": "0", "caption": "Steam", "label": "Games live on Steam" },
+      { "id": "web", "icon": "globe-white", "value": "3", "caption": "Web apps", "label": "3 web apps people can use in the browser: Cruffled, GameTsunami and the Weatherie demo" },
+      { "id": "soon", "icon": "rocket-white", "value": "6", "caption": "Coming soon", "label": "6 more products coming soon" }
+    ]
+  }
 }
