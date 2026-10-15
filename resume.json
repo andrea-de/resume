@@ -377,7 +377,8 @@
       { "id": "ios", "icon": "apple-white", "value": "4", "caption": "iOS", "label": "4 iOS apps on the App Store, 2 live and 2 in review" },
       { "id": "steam", "icon": "steam-white", "value": "0", "caption": "Steam", "label": "Games live on Steam" },
       { "id": "web", "icon": "globe-white", "value": "15", "caption": "Web", "label": "15 live websites and web apps" },
-      { "id": "pipeline", "icon": "rocket-white", "value": "8", "caption": "Pipeline", "label": "8 more apps in the release pipeline" }
+      { "id": "cicd", "icon": "cicd-white", "value": "14", "caption": "CI/CD", "label": "14 live CI/CD release pipelines" },
+      { "id": "soon", "icon": "rocket-white", "value": "4", "caption": "Coming soon", "label": "4 more products coming soon" }
     ]
   }
 }
