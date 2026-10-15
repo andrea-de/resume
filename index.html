@@ -869,6 +869,20 @@
                                 (c) => !c.region || c.region === region,
                             );
 
+                            // With a job link (?code=k7q), the site link and the name point to
+                            // it too, as the QR code does.
+                            const code = urlParams.get("code");
+                            if (code && /^[a-z0-9]{3}$/.test(code)) {
+                                const jobLink = `${QR_SITE}/r/${code}`;
+                                this.resume.contact
+                                    .filter((c) => c.icon === "website-img")
+                                    .forEach((c) => {
+                                        c.href = jobLink;
+                                        c.text = `andreadecandia.com/r/${code}`;
+                                    });
+                                if (this.resume.personalInfo) this.resume.personalInfo.website = jobLink;
+                            }
+
                             const updateLinks = (obj) => {
                                 if (obj.href && obj.href.includes("andrea-dev.com")) {
                                     if (ref) {
