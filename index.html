@@ -582,12 +582,12 @@
             const QR_QUIET = 4; // quiet zone, in modules
             // Logo-in-dots style (?qrShape=): finder eyes and the dark modules outside the shape
             const QR_EYE_COLOR = "#27272a"; // zinc-800
-            const QR_OUTSIDE_COLOR = "#52525b"; // zinc-600
+            const QR_OUTSIDE_COLOR = "#a1a1aa"; // zinc-400: light, so the logo stands out (scans less well when blurred)
             // Dots outside the shape are smaller, so the shape reads. Below ~0.4 they blur away
             // first: at 0.32 zxing failed on blurred / tilted renders the 0.4 dots survive.
             const QR_OUTSIDE_RADIUS = 0.4;
             const QR_FALLBACK_TINT = "#e4e4e7"; // zinc-200, the tint when the brand color is too light
-            const QR_SHAPE_VERSION = 7; // 45x45 modules: enough for a smooth silhouette
+            const QR_SHAPE_VERSION = 10; // 57x57 modules: a smoother silhouette
             const QR_SHAPE_SPAN = 0.9; // the shape spans 90% of the module grid
             const QR_SHAPE_TINT = 0.78; // light modules inside: brand color mixed with 78% white
 
@@ -623,8 +623,15 @@
                 }
                 const ratio = contrastOnWhite(hex);
                 if (ratio < 4.5) {
-                    console.warn(`QR: qrColor ${hex} has contrast ${ratio.toFixed(2)}:1 on white (< 4.5); using ${QR_FALLBACK_COLOR}`);
-                    return QR_FALLBACK_COLOR;
+                    // Too light to scan: darken it (same hue) until it reaches 4.5:1.
+                    let dark = hex;
+                    for (let k = 0.98; contrastOnWhite(dark) < 4.5 && k > 0.2; k -= 0.02) {
+                        dark = "#" + [1, 3, 5]
+                            .map((i) => Math.round(parseInt(hex.slice(i, i + 2), 16) * k).toString(16).padStart(2, "0"))
+                            .join("");
+                    }
+                    console.warn(`QR: qrColor ${hex} has contrast ${ratio.toFixed(2)}:1 on white (< 4.5); darkened to ${dark}`);
+                    return contrastOnWhite(dark) >= 4.5 ? dark : QR_FALLBACK_COLOR;
                 }
                 return hex;
             }

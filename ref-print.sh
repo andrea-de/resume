@@ -8,7 +8,7 @@ usage() {
     echo "Usage: ./ref-print.sh <code> [--region us|eu] [--color <hex>] [--logo-shape <path|url>] [--brand <name>]"
     echo "  <code>    the 3-character link code from the site API (lowercase letters/digits)"
     echo "  --region  us (default, US number) or eu (Spanish number)"
-    echo "  --color   QR module color as hex without #, e.g. 0b5fff (must be >= 4.5:1 on white)"
+    echo "  --color   QR module color as hex without #, e.g. 0b5fff (lighter colors are darkened to 4.5:1 on white)"
     echo "  --logo-shape  silhouette (SVG, or PNG by alpha/darkness) the dots form, in the --color brand color"
     echo "  --brand   company name: looks up its silhouette and brand color in Simple Icons and uses"
     echo "            them as --logo-shape and --color (an explicit --color wins). Not found -> plain QR."
@@ -146,7 +146,7 @@ PY
     fi
 fi
 
-# The page falls back to near-black (with a grey tint in the logo) under 4.5:1 on white.
+# The page darkens a color under 4.5:1 on white (same hue) until it scans.
 if [ -n "$COLOR" ]; then
     RATIO=$(python3 -c '
 import sys
@@ -155,7 +155,7 @@ lin = lambda c: c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
 r, g, b = (lin(int(h[i:i + 2], 16) / 255) for i in (0, 2, 4))
 print(f"{1.05 / (0.2126 * r + 0.7152 * g + 0.0722 * b + 0.05):.2f}")' "$COLOR")
     if python3 -c 'import sys; sys.exit(float(sys.argv[1]) >= 4.5)' "$RATIO"; then
-        echo "Color: #$COLOR is too light to scan ($RATIO:1 on white, needs 4.5:1); the QR uses near-black #111111${SHAPE:+ with a grey tint}."
+        echo "Color: #$COLOR is too light to scan ($RATIO:1 on white, needs 4.5:1); the QR darkens it to 4.5:1."
     fi
 fi
 
