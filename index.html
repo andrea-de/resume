@@ -131,6 +131,59 @@
                 box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
             }
 
+            /* The QR's box: the hint hangs below it without taking space */
+            .qr-wrap {
+                position: relative;
+                margin-bottom: 1em;
+            }
+            .qr-wrap .qr-tile {
+                margin-bottom: 0;
+            }
+            .sidebar .qr-hint {
+                /* just under the QR's bottom-right corner, right of the name, out of the flow */
+                position: absolute;
+                top: calc(100% + 4px);
+                right: 0;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.25em;
+                padding: 0.08em 0.5em 0.08em 0.4em;
+                border-radius: 999px;
+                background: #134e4a;
+                color: #fff !important;
+                font-size: 0.66em;
+                font-weight: 700;
+                line-height: 1.35;
+                letter-spacing: 0.02em;
+                text-decoration: none !important;
+                white-space: nowrap;
+            }
+            .qr-hint svg {
+                width: 0.9em;
+                height: 0.9em;
+            }
+
+            /* The website row stands out: it is the link worth clicking */
+            .sidebar .contact-link.site-link {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.3em;
+                margin: -0.12em 0 -0.12em -0.45em;
+                padding: 0.12em 0.55em 0.12em 0.45em;
+                border-radius: 999px;
+                background: #fff;
+                color: #134e4a !important;
+                font-weight: 700;
+                opacity: 1;
+            }
+            .sidebar li.site-row {
+                align-items: center;
+            }
+            .site-link svg {
+                width: 0.8em;
+                height: 0.8em;
+            }
+
             .qr-tile svg {
                 display: block;
                 width: 100%;
@@ -345,13 +398,18 @@
                 <div class="sidebar text-left">
                     <section class="info pt-1 pb-1">
                         <!-- QR code to the site (or a personal /r/<code> link), see qrTarget() -->
-                        <a
-                            v-if="qr.svg"
-                            :href="qr.url"
-                            class="qr-tile"
-                            :title="qr.url"
-                            v-html="qr.svg"
-                        ></a>
+                        <div v-if="qr.svg" class="qr-wrap">
+                            <a
+                                :href="qr.url"
+                                class="qr-tile"
+                                :title="qr.url"
+                                v-html="qr.svg"
+                            ></a>
+                            <!-- Says the code is a link too; pinned under its bottom-right corner, beside the name, out of the flow -->
+                            <a :href="qr.url" class="qr-hint"
+                                ><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 10.5V2M2.5 5.5 6 2l3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Click or scan</a
+                            >
+                        </div>
 
                         <!-- Name -->
                         <h1 class="mt-1  ml-1 mb-1 leading-tight text-[2.5em] font-montserrat font-extrabold tracking-tight text-left">
@@ -395,6 +453,7 @@
                                 v-for="(contactItem, index) in resume.contact"
                                 :key="index"
                                 class="flex items-start justify-start gap-[0.7em] text-left mb-2.5"
+                                :class="{ 'site-row': contactItem.icon === 'website-img' }"
                                 v-show="!contactItem.hidden"
                             >
                                 <span
@@ -410,6 +469,13 @@
                                         v-text="'@' + contactItem.text.split('@')[1]"
                                     ></div>
                                 </span>
+                                <a
+                                    v-else-if="contactItem.icon === 'website-img'"
+                                    :href="contactItem.href"
+                                    class="contact-link site-link"
+                                    ><span v-text="contactItem.text"></span
+                                    ><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4 2.5h5.5V8M9.5 2.5 2.5 9.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg
+                                ></a>
                                 <a
                                     v-else
                                     :href="contactItem.href"
