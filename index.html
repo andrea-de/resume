@@ -870,7 +870,8 @@
                             );
 
                             // With a job link (?code=k7q), the site link and the name point to
-                            // it too, as the QR code does.
+                            // it too, as the QR code does. The text stays the bare domain: nobody
+                            // types the code, they click it.
                             const code = urlParams.get("code");
                             if (code && /^[a-z0-9]{3}$/.test(code)) {
                                 const jobLink = `${QR_SITE}/r/${code}`;
@@ -878,7 +879,7 @@
                                     .filter((c) => c.icon === "website-img")
                                     .forEach((c) => {
                                         c.href = jobLink;
-                                        c.text = `andreadecandia.com/r/${code}`;
+                                        c.text = "andreadecandia.com";
                                     });
                                 if (this.resume.personalInfo) this.resume.personalInfo.website = jobLink;
                             }
