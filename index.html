@@ -951,7 +951,7 @@
                             }
 
                             const updateLinks = (obj) => {
-                                if (obj.href && obj.href.includes("andrea-dev.com")) {
+                                if (obj.href && /andrea-dev\.com|andreadecandia\.com/.test(obj.href)) {
                                     if (ref) {
                                         const sep = obj.href.includes("?") ? "&" : "?";
                                         obj.href += `${sep}utm_campaign=${ref}`;
