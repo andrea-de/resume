@@ -22,8 +22,11 @@ Once running, visit `http://localhost:3000` (or the port provided) to view the r
 
 ---
 
-## How to Print (PDF & PNG)
-You can generate a PDF and a high-quality PNG preview in one command. This script requires **Google Chrome** (or Chromium) and **poppler-utils** (`pdftoppm`).
+## How to Print (PDF, PNG, Word, plain PDF)
+One command prints the designed PDF, a PNG preview, a Word file and a plain single-column
+PDF, then reads each back as text and fails if any reads wrong. It requires **Google
+Chrome** (or Chromium), **poppler-utils** (`pdftoppm`, `pdftotext`, `pdfinfo`) and
+**python3** with `venv` (the first run creates `.venv/` with python-docx, gitignored).
 
 ### Generate the standard version:
 ```bash
@@ -34,6 +37,11 @@ This prints two versions from the same `resume.json`:
 - `resume.pdf` / `resume-preview.png`: the US version, with the US phone number.
 - `cv.pdf` / `cv-preview.png`: the European version, with the Spanish phone number
   (`index.html?region=eu`). andreadecandia.com serves it to visitors in Europe.
+- `resume.docx`, `resume-plain.pdf`, `cv.docx`, `cv-plain.pdf`: the same text for software
+  that reads resumes (see [Word file and plain PDF](#word-file-and-plain-pdf)).
+
+`./print.sh --location "City, Country"` adds a location row to both (`--eu-location` gives
+the European version its own); see [Location](#location).
 
 A contact entry with `"region": "us"` or `"region": "eu"` shows only in that version;
 entries without a region show in both.
@@ -53,21 +61,29 @@ This will output:
 ### Generate a version for a personal job link (QR code):
 Andrea's site hands out personal job links: the site API returns a 3-character code, and
 `https://www.andreadecandia.com/r/<code>` is the link for that company. `ref-print.sh` prints a
-résumé whose QR code (top-left of the sidebar) points to that link.
+resume whose QR code (top-left of the sidebar) points to that link.
 
 ```bash
 ./ref-print.sh <code> [--region us|eu] [--color <hex>] [--logo-shape <path|url>] [--brand <name>]
+               [--variant <name>] [--location "<text>"]
 # Examples:
 ./ref-print.sh k7q                                        # US number, default teal QR
 ./ref-print.sh k7q --region eu                            # Spanish number
 ./ref-print.sh k7q --color 0b5fff                         # brand-colored QR
 ./ref-print.sh k7q --color c2410c --logo-shape shape.svg  # the dots form a silhouette
 ./ref-print.sh k7q --brand stripe                         # the company's logo and color, looked up
+./ref-print.sh k7q --variant acme                         # text tailored in variants/acme.json
+./ref-print.sh k7q --location "Springfield, USA"          # with a location row
 ```
 
-This will output:
+This will output (all gitignored):
 - `resume-<code>.pdf`
 - `resume-<code>-preview.png`
+- `resume-<code>.docx`
+- `resume-<code>-plain.pdf`
+
+`--variant <name>` prints the text of `variants/<name>.json` in place of the generic one
+(see [Variants](#variants-one-application-one-file)); an unknown name stops the script.
 
 The code must be exactly 3 lowercase letters or digits. A local `--logo-shape` file is copied into
 the repo as `.qr-logo-*` while printing (the page can only load files the print server can see) and
@@ -85,7 +101,94 @@ by title or alias, case-insensitively. Downloads are cached in `.brand-cache/` (
   a grey tint; the script says so.
 - Not found (or offline): a note, and a plain QR in `--color` if given, else the default teal. A
   missing brand never stops the print.
-- Brand logos are trademarks: only for a one-off résumé sent to that company, never published.
+- Brand logos are trademarks: only for a one-off resume sent to that company, never published.
+
+---
+
+## Content
+
+### Skills line
+`"skillsLine"` in `resume.json` prints as one line, `Skills: ...`, at the bottom of the main
+column and leads the Skills section of the Word file and the plain PDF. It is there for
+software that matches keywords: it names the languages and tools in plain words, once. It
+must fit on one line (the print fails if it wraps).
+
+### Chips
+A job's chip row is its `"chips"` list when it has one; otherwise it is collected from the
+`tech` of its responsibilities, as before.
+
+### Hide, don't delete: `alternates`
+Wording that was replaced is kept in `resume.json` under `"alternates"`, beside what
+replaced it: on a responsibility, a list of earlier bullets; on a job,
+`"alternates": {"chips": [[...]]}` for earlier chip rows. Nothing reads `alternates` when
+rendering: the text is not in the page, the PDF, the Word file or the plain PDF, and
+`check-extract.sh` fails a print in which an alternate bullet shows up. To bring one back,
+swap it with the entry in `details` (or `chips`).
+
+### Location
+The resume shows no location by default: the row is absent, not hidden. It appears only
+when asked for, as free text: `--location "<text>"` on `print.sh` and `ref-print.sh`,
+`"location"` in a variant file, or `index.html?location=<text>`. The command line wins
+over the variant.
+
+### Variants: one application, one file
+`variants/<name>.json` replaces chips, single bullets (keyed by the responsibility's
+`scope`), a job's `unifiedScope`, the Skills line and the location for one application,
+without touching `resume.json`. The files are **gitignored** (this repo is public); only
+`variants/README.md`, which has the format and the rules, and `variants/example.json` are
+committed. Select one with `./ref-print.sh <code> --variant <name>` or
+`index.html?variant=<name>`. What a variant replaces is absent from every output.
+
+---
+
+## Reading by software
+
+### The rule: text is never positioned or translucent
+Chromium writes a PDF's text in **paint order**, and anything with `position` (other than
+static) or `opacity` below 1 is painted after the normal flow. Text in such a box lands at
+the end of the PDF's text, whatever it looks like on the page: that is how the dates once
+ended up in a pile after the last job, and the name after the contacts. So in `index.html`
+nothing that holds text is positioned or has opacity (quieter text uses a color), and the
+order of the HTML is the order software reads. The comment at the top of the `<style>`
+block says the same.
+
+### `check-extract.sh`
+Runs after every print (`print.sh`, `ref-print.sh`); also by hand:
+
+```bash
+./check-extract.sh resume.pdf
+./check-extract.sh resume-k7q.pdf --region eu --variant acme --code k7q
+```
+
+It reads the file with `pdftotext -raw` (about 0.2 s) and compares it with `resume.json`
+(plus the variant and location). It fails, with exit code 1 and the offending line, when:
+- the PDF is not exactly one page;
+- the email, phone, LinkedIn or GitHub address is not in the text whole, on its own line;
+- the name is not in the first lines;
+- a job's header, bullets and chips are not one contiguous run, or jobs are out of order;
+- a bullet, a chip row or the Skills line wraps onto a second line;
+- a location was asked for and is missing, or replaced text (a variant's, or an
+  `alternates` bullet) is still in the file.
+
+The Word file and the plain PDF get the content checks (`--plain` for the PDF).
+
+### Word file and plain PDF
+`make-plain.sh <name>` (called by the print scripts) writes, from the same data as the
+designed PDF, with the same region, variant and location:
+- `<name>.docx`: one column, real heading styles, name and contacts first as plain text,
+  each job as title, `Company | dates`, bullets and a `Tech:` line, then Education and
+  Skills. No tables, text boxes, headers, footers, images or hyperlink fields. Written by
+  python-docx; no Microsoft software involved.
+- `<name>-plain.pdf`: the same content as a one-page single-column PDF, printed by Chromium.
+- `<name>-docx-preview.pdf`: optional, the Word file as LibreOffice lays it out, only when
+  `soffice` is installed (`libreoffice-writer-nogui` is enough). Without it, or if the
+  conversion fails, a one-line notice and everything else still succeeds. Gitignored.
+
+The designed PDF's two columns are read correctly by software that follows the PDF's text
+order; software that reorders text by position can still mix the columns. The Word file
+and the plain PDF are for those: upload them where a form parses the resume.
+
+Only one browser at a time: both scripts start Chromium, and `soffice` is heavy too.
 
 ---
 
