@@ -229,9 +229,14 @@
                 color: rgba(255, 255, 255, 0.95);
             }
 
+            /* Links & Contact: one size for every row (site pill, LinkedIn, GitHub, email,
+               phone, location), each on one line. 0.98em is the largest at which the longest
+               row, linkedin.com/in/a-decandia, fits the column (it fills it at 0.989em; the
+               email is next; the site pill, bold with its arrow, has room to spare). */
             .sidebar .contact-link, .sidebar .project-link {
-                font-size: 1.05em;
+                font-size: 0.98em;
                 color: rgba(255, 255, 255, 0.9) !important;
+                white-space: nowrap;
             }
 
             .sidebar .ink-90, .sidebar .sidebar-title {
@@ -363,6 +368,30 @@
                 font-size: 0.92em;
             }
 
+            /* The one-line Skills row closes the main column; the last job gives up its
+               trailing margin for it */
+            .work-experience-list > li:last-child > ul:last-child {
+                margin-bottom: 0;
+            }
+            .skills-line {
+                margin: 0.5em 0 0;
+                font-size: 0.85em;
+                line-height: 1.3;
+                color: #333;
+            }
+            .skills-label {
+                font-weight: 800;
+                color: #0f766e;
+            }
+
+            .load-error {
+                margin: 0;
+                padding: 1em;
+                background: #b91c1c;
+                color: #fff;
+                font-weight: 700;
+            }
+
             .job-tech-chips {
                 display: flex;
                 flex-wrap: wrap;
@@ -425,6 +454,7 @@
 
     <body class="font-nunito w-full">
         <div v-scope="ResumeApp()" @vue:mounted="loadResume" class="resume-app">
+            <p v-if="loadError" class="load-error" v-text="loadError"></p>
             <!-- Column Container -->
             <div class="resume-columns">
                 <!-- Side Column - Info -->
@@ -492,18 +522,16 @@
                                 v-show="!contactItem.hidden"
                             >
                                 <span
+                                    class="shrink-0"
                                     :style="getIconStyle(contactItem.icon, { size: 1.1, white: true })"
                                 ></span>
-                                <span v-if="contactItem.text.includes('@')">
-                                    <a
-                                        :href="contactItem.href"
-                                        class="contact-link"
-                                        v-text="contactItem.text.split('@')[0]"
-                                    ></a>
-                                    <div class="text-[0.8em] text-left -mt-0.5 leading-tight ink-80"
-                                        v-text="'@' + contactItem.text.split('@')[1]"
-                                    ></div>
-                                </span>
+                                <!-- Every row is one run of text on one line (an email split over two
+                                     lines is read as two fragments by software) -->
+                                <span
+                                    v-if="!contactItem.href"
+                                    class="contact-link"
+                                    v-text="contactItem.text"
+                                ></span>
                                 <a
                                     v-else-if="contactItem.icon === 'website-img'"
                                     :href="contactItem.href"
@@ -632,6 +660,10 @@
                             </ul>
                         </li>
                     </ul>
+                    <!-- Skills: one line, from resume.json -> skillsLine (or the variant's) -->
+                    <p v-if="resume.skillsLine" class="skills-line"
+                        ><span class="skills-label">Skills:</span> <span v-text="resume.skillsLine"></span
+                    ></p>
                 </div>
 
                 <!-- Bottom Technologies Section -->
@@ -693,7 +725,7 @@
             const QR_SHAPE_TINT = 0.78; // light modules inside: brand color mixed with 78% white
 
             // What the QR encodes: ?code=k7q -> /r/k7q, otherwise the site with the
-            // résumé UTM tag (+ utm_campaign when ?ref= is set).
+            // resume UTM tag (+ utm_campaign when ?ref= is set).
             function qrTarget(params) {
                 const code = params.get("code");
                 if (code) {
@@ -921,9 +953,30 @@
                 );
             }
 
+            // Swap a variant's overrides into the resume data (see loadResume). Throws on a
+            // company or scope the resume doesn't have, so a typo can't print the generic text.
+            function applyVariant(resume, variant, name) {
+                const fail = (msg) => {
+                    throw new Error(`Variant "${name}": ${msg}`);
+                };
+                for (const [company, override] of Object.entries(variant.jobs || {})) {
+                    const job = (resume.workExperience || []).find((j) => j.company === company);
+                    if (!job) fail(`no job at "${company}" in resume.json`);
+                    if (Array.isArray(override.chips)) job.chips = override.chips;
+                    if (override.unifiedScope) job.unifiedScope = override.unifiedScope;
+                    for (const [scope, text] of Object.entries(override.bullets || {})) {
+                        const responsibility = (job.responsibilities || []).find((r) => r.scope === scope);
+                        if (!responsibility) fail(`"${company}" has no responsibility with scope "${scope}"`);
+                        responsibility.details = [text];
+                    }
+                }
+                if (variant.skillsLine) resume.skillsLine = variant.skillsLine;
+            }
+
             function ResumeApp() {
                 return {
                     resume: {},
+                    loadError: "",
                     icons: {},
                     qr: { url: "", svg: "" },
                     stats: { heading: "", items: [], captions: true },
@@ -935,11 +988,34 @@
                                     fetch("./resume.json"),
                                     fetch("./icons.json"),
                                 ]);
-                            this.resume = await resumeResponse.json();
+                            const resume = await resumeResponse.json();
                             this.icons = await iconsResponse.json();
 
                             // Handle tracking parameters from URL
                             const urlParams = new URLSearchParams(window.location.search);
+
+                            // ?variant=<name> prints a tailored version: variants/<name>.json
+                            // (gitignored, one file per application) replaces a job's chip row,
+                            // single bullets (keyed by the responsibility's `scope`), its
+                            // unifiedScope, the Skills line, and may set a location. The generic
+                            // text stays in resume.json; what a variant replaces is swapped out
+                            // here, before anything renders, so it is not in the page or the PDF.
+                            // A variant that can't be applied stops the page: see variants/README.md.
+                            const variantName = urlParams.get("variant");
+                            let variant = null;
+                            if (variantName) {
+                                if (!/^[A-Za-z0-9][A-Za-z0-9_-]*$/.test(variantName)) {
+                                    throw new Error(`Variant name "${variantName}" is not valid`);
+                                }
+                                const variantResponse = await fetch(`./variants/${variantName}.json`);
+                                if (!variantResponse.ok) {
+                                    throw new Error(`Variant "${variantName}": variants/${variantName}.json not found`);
+                                }
+                                variant = await variantResponse.json();
+                                applyVariant(resume, variant, variantName);
+                            }
+                            document.documentElement.dataset.variant = variant ? variantName : "";
+                            this.resume = resume;
                             const ref = urlParams.get("ref");
                             const job = urlParams.get("job");
 
@@ -969,6 +1045,21 @@
                             this.resume.contact = (this.resume.contact || []).filter(
                                 (c) => !c.region || c.region === region,
                             );
+
+                            // LinkedIn reads as its whole address (linkedin.com/in/...), so
+                            // software reading the text finds a profile URL, not a bare handle.
+                            this.resume.contact
+                                .filter((c) => c.icon === "linkedin-img" && c.href)
+                                .forEach((c) => {
+                                    c.text = c.href.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "");
+                                });
+
+                            // Location: not on the resume unless asked for, with ?location=
+                            // (free text) or a variant's `location`. Not asked -> no row at all.
+                            const location = (urlParams.get("location") || variant?.location || "").trim();
+                            if (location) {
+                                this.resume.contact.push({ icon: "location-img", text: location });
+                            }
 
                             // With a job link (?code=k7q), the site link and the name point to
                             // it too, as the QR code does. The text stays the bare domain: nobody
@@ -1015,6 +1106,8 @@
                             console.log("Icons loaded:", this.icons);
                         } catch (error) {
                             console.error("Error loading data:", error);
+                            this.loadError = `Resume not rendered: ${error.message}`;
+                            document.title = `ERROR: ${error.message}`;
                         }
                     },
 
@@ -1069,6 +1162,11 @@
                     getJobTechList(job) {
                         if (!job || !Array.isArray(job.responsibilities)) {
                             return [];
+                        }
+
+                        // A variant's explicit chip row replaces the derived one.
+                        if (Array.isArray(job.chips)) {
+                            return job.chips;
                         }
 
                         const uniqueTech = [];

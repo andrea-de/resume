@@ -52,6 +52,12 @@
       "department": "",
       "location": "Remote",
       "remote": true,
+      "chips": ["TypeScript", "React", "Node.js", "Agent Orchestration", "MCP", "AI Harnesses", "GCP"],
+      "alternates": {
+        "chips": [
+          ["Agent Orchestration", "MCP", "AI Harnesses", "Playwright", "Context Engineering", "GCP"]
+        ]
+      },
       "responsibilities": [
         {
           "scope": "Agent Orchestration",
@@ -64,6 +70,9 @@
           "scope": "Development Harnesses",
           "tech": "<strong>AI Harnesses, Playwright</strong>",
           "details": [
+            "Wrap AI agents in headless Playwright harnesses to autonomously build and test code."
+          ],
+          "alternates": [
             "Wrap AI agents in headless execution harnesses to autonomously build and verify code."
           ]
         },
@@ -78,12 +87,18 @@
           "scope": "Full-Lifecycle Delivery",
           "tech": "<strong>GCP</strong>",
           "details": [
+            "Ship React Native and TypeScript apps from concept to release on iOS, Android, and web."
+          ],
+          "alternates": [
             "Deliver and maintain numerous products from concept to release on iOS, Android, and web."
           ]
         },
         {
           "scope": "Generative AI Engines",
           "details": [
+            "Build Node.js and TypeScript APIs on Cloud Run that serve LLM-generated media to apps."
+          ],
+          "alternates": [
             "Build user-facing AI engines synthesizing dynamic media, software, and rich metadata."
           ]
         }
@@ -274,6 +289,7 @@
       ]
     }
   ],
+  "skillsLine": "TypeScript, JavaScript, React, Next.js, Node.js, Python, Kotlin, SQL, LLM APIs, GCP",
   "methodologies": [
     "Scrum Agile CI/CD",
     "Microservices Architecture",

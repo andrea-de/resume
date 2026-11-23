@@ -17,3 +17,21 @@ node_modules/
 
 # Simple Icons downloads for ref-print.sh --brand
 .brand-cache/
+
+# Word and plain versions of job prints (resume-<code>.docx, resume-<code>-plain.pdf);
+# the generic ones (resume.docx, cv.docx, resume-plain.pdf, cv-plain.pdf) are tracked
+resume-*.docx
+!resume-plain.pdf
+.plain-*.html
+
+# Per-application variants: job-specific text stays out of the (public) repo
+variants/*
+!variants/README.md
+!variants/example.json
+
+# python-docx for make-plain.sh, created on first run
+.venv/
+__pycache__/
+
+# The Word file converted by LibreOffice, when it is installed (make-plain.sh)
+*-docx-preview.pdf

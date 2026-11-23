@@ -1,0 +1,14 @@
+{
+  "note": "Example only: copy to variants/<company>.json and edit. Free text, never printed.",
+  "location": "Springfield, USA",
+  "skillsLine": "TypeScript, JavaScript, React, Node.js, Python, SQL",
+  "jobs": {
+    "Mesa Cloud, Inc.": {
+      "chips": ["Python", "FastAPI", "PostgreSQL", "AWS"],
+      "unifiedScope": "Data Platform Engineering",
+      "bullets": {
+        "Cloud Infrastructure": "Ran the services on AWS Elastic Beanstalk with network policies per environment."
+      }
+    }
+  }
+}
