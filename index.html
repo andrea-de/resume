@@ -368,14 +368,16 @@
                 font-size: 0.92em;
             }
 
-            /* The one-line Skills row closes the main column; the last job gives up its
-               trailing margin for it */
+            /* The one-line Skills row opens the main column, above Work Experience; the last
+               job gives up its trailing margin for it */
             .work-experience-list > li:last-child > ul:last-child {
                 margin-bottom: 0;
             }
             .skills-line {
-                margin: 0.5em 0 0;
-                font-size: 0.85em;
+                margin: 0 0 0.45em;
+                padding-bottom: 0.35em;
+                border-bottom: 1px solid #e5e7eb;
+                font-size: 0.88em;
                 line-height: 1.3;
                 color: #333;
             }
@@ -598,6 +600,10 @@
 
                 <!-- Main Column - Work Experience -->
                 <div class="main-column text-left">
+                    <!-- Skills: one line above the jobs, from resume.json -> skillsLine (or the variant's) -->
+                    <p v-if="resume.skillsLine" class="skills-line"
+                        ><span class="skills-label">Skills:</span> <span v-text="resume.skillsLine"></span
+                    ></p>
                     <!-- Work Experience -->
                     <h2 class="text-[1.3em] font-montserrat font-extrabold uppercase tracking-tight mb-3 text-teal-600">Work Experience</h2>
                     <ul
@@ -660,10 +666,6 @@
                             </ul>
                         </li>
                     </ul>
-                    <!-- Skills: one line, from resume.json -> skillsLine (or the variant's) -->
-                    <p v-if="resume.skillsLine" class="skills-line"
-                        ><span class="skills-label">Skills:</span> <span v-text="resume.skillsLine"></span
-                    ></p>
                 </div>
 
                 <!-- Bottom Technologies Section -->

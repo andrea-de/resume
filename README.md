@@ -108,8 +108,8 @@ by title or alias, case-insensitively. Downloads are cached in `.brand-cache/` (
 ## Content
 
 ### Skills line
-`"skillsLine"` in `resume.json` prints as one line, `Skills: ...`, at the bottom of the main
-column and leads the Skills section of the Word file and the plain PDF. It is there for
+`"skillsLine"` in `resume.json` prints as one line, `Skills: ...`, at the top of the main
+column, above Work Experience, and leads the Skills section of the Word file and the plain PDF. It is there for
 software that matches keywords: it names the languages and tools in plain words, once. It
 must fit on one line (the print fails if it wraps).
 
