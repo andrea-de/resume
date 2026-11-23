@@ -1,9 +1,10 @@
 <!doctype html>
-<html>
+<html lang="en">
     <head>
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>Resume</title>
+        <title>Andrea de Candia - Product Engineer - Resume</title>
+        <meta name="author" content="Andrea de Candia" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
         <!-- Fonts -->
@@ -37,6 +38,15 @@
         <script src="https://unpkg.com/petite-vue"></script>
 
         <style>
+            /* RULE (PDF text layer): nothing that holds text may be positioned (position:
+               relative/absolute/fixed/sticky, also on an ancestor) or have opacity below 1.
+               Chromium writes the PDF's text in paint order, and positioned or translucent
+               boxes are painted after everything else: their text lands at the end of the
+               text layer (and translucent text in a separate group), so software reading the
+               PDF sees bullets detached from their jobs and the name after the work history.
+               For a lighter ink use an rgba() color; to place something, use flex or grid.
+               ./check-extract.sh verifies the reading order after every print. */
+
             /* Essential styles that can't be done with UnoCSS */
             html,
             body {
@@ -104,7 +114,8 @@
                 padding: 0.6em 0;
                 padding-left: 0.8em;
                 padding-right: 0.8em;
-                position: relative;
+                /* no position: a positioned box is painted after everything else, which put the
+                   sidebar's text after the whole main column in the PDF's text layer */
             }
 
             .sidebar a {
@@ -133,17 +144,33 @@
 
             /* The QR's box: the hint hangs below it without taking space */
             .qr-wrap {
-                position: relative;
                 margin-bottom: 1em;
+            }
+            /* QR, name, title stacked in a grid; the hint shares the name's cell */
+            .sidebar .info {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .sidebar .info > h1 {
+                grid-row: 2;
+                grid-column: 1;
+                margin-top: 0; /* grid margins don't collapse: the QR's 1em already covers it */
+            }
+            .sidebar .info > .sidebar-title {
+                grid-row: 3;
+                margin-top: 0;
             }
             .qr-wrap .qr-tile {
                 margin-bottom: 0;
             }
             .sidebar .qr-hint {
                 /* just under the QR's bottom-right corner, right of the name, out of the flow */
-                position: absolute;
-                top: calc(100% + 4px);
-                right: 0;
+                grid-row: 2;
+                grid-column: 1;
+                justify-self: end;
+                align-self: start;
+                /* 4px under the QR: back up over the QR's 1em bottom margin (1em there = 1/0.66em here) */
+                margin-top: calc(4px - 1.51515em);
                 display: inline-flex;
                 align-items: center;
                 gap: 0.25em;
@@ -174,7 +201,6 @@
                 background: #fff;
                 color: #134e4a !important;
                 font-weight: 700;
-                opacity: 1;
             }
             .sidebar li.site-row {
                 align-items: center;
@@ -200,12 +226,19 @@
             .sidebar .about-text {
                 font-size: 1.1em;
                 line-height: 1.4;
-                opacity: 0.95;
+                color: rgba(255, 255, 255, 0.95);
             }
 
             .sidebar .contact-link, .sidebar .project-link {
                 font-size: 1.05em;
-                opacity: 0.9;
+                color: rgba(255, 255, 255, 0.9) !important;
+            }
+
+            .sidebar .ink-90, .sidebar .sidebar-title {
+                color: rgba(255, 255, 255, 0.9);
+            }
+            .sidebar .ink-80 {
+                color: rgba(255, 255, 255, 0.8);
             }
 
             .sidebar .degree-item {
@@ -265,7 +298,7 @@
                 font-size: 0.66em;
                 font-weight: 700;
                 line-height: 1;
-                opacity: 0.88;
+                color: rgba(255, 255, 255, 0.88);
             }
 
             .dept::before {
@@ -323,7 +356,7 @@
             }
 
             .responsibility-item {
-                position: relative;
+                /* no position: positioned bullets were painted (and extracted) after every job's header and chips */
                 padding-left: 0.1em;
                 margin-bottom: 0.15em;
                 line-height: 1.25;
@@ -405,10 +438,6 @@
                                 :title="qr.url"
                                 v-html="qr.svg"
                             ></a>
-                            <!-- Says the code is a link too; pinned under its bottom-right corner, beside the name, out of the flow -->
-                            <a :href="qr.url" class="qr-hint"
-                                ><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 10.5V2M2.5 5.5 6 2l3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Click or scan</a
-                            >
                         </div>
 
                         <!-- Name -->
@@ -422,9 +451,15 @@
 
                         <!-- Job Title -->
                         <div
-                            class="italic font-medium text-[1.15em] text-left mt-0.5 mb-2 ml-1 opacity-90 tracking-wide"
+                            class="italic font-medium text-[1.15em] text-left mb-2 ml-1 tracking-wide sidebar-title"
                             v-text="resume.personalInfo?.title"
                         ></div>
+
+                        <!-- Says the QR is a link too; sits under its bottom-right corner, beside the name
+                             (placed by the grid); after the name and title in the document order -->
+                        <a v-if="qr.svg" :href="qr.url" class="qr-hint"
+                            ><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 10.5V2M2.5 5.5 6 2l3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Click or scan</a
+                        >
 
                         <!-- Picture -->
                         <div class="hidden pl-[2em] text-center" hidden>
@@ -465,7 +500,7 @@
                                         class="contact-link"
                                         v-text="contactItem.text.split('@')[0]"
                                     ></a>
-                                    <div class="text-[0.8em] text-left opacity-80 -mt-0.5 leading-tight"
+                                    <div class="text-[0.8em] text-left -mt-0.5 leading-tight ink-80"
                                         v-text="'@' + contactItem.text.split('@')[1]"
                                     ></div>
                                 </span>
@@ -496,10 +531,10 @@
                             <div
                                 v-for="(degree, index) in resume.education.degrees"
                                 :key="index"
-                                class="degree-item italic opacity-90"
+                                class="degree-item italic ink-90"
                                 v-text="degree"
                             ></div>
-                            <div class="mt-2 ml-2 text-[0.95em] opacity-80 leading-snug">
+                            <div class="mt-2 ml-2 text-[0.95em] leading-snug ink-80">
                                 <span v-text="resume.education.description"></span>
                             </div>
                         </div>
@@ -560,10 +595,10 @@
                                         class="job-company"
                                         v-text="job.company"
                                     ></span>
-                                    <h3
+                                    <span
                                         class="job-time m-0 text-right whitespace-nowrap"
                                         v-text="job.time"
-                                    ></h3>
+                                    ></span>
                                 </div>
                             </div>
                             <div
