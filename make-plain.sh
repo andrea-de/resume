@@ -48,7 +48,8 @@ fi
 [ -s "$NAME-plain.pdf" ] && { ./check-extract.sh "$NAME-plain.pdf" --plain "$@" || STATUS=1; }
 
 # Optional: the Word file as a word processor lays it out, <name>-docx-preview.pdf, by
-# LibreOffice (soffice) when it is installed, read back like the others. Not installed,
+# LibreOffice (soffice) when it is installed. It is only for looking at (the Word file
+# itself is what the check reads; LibreOffice's bullet glyphs would fail it here). Not installed,
 # or the conversion fails: a one-line notice, and everything else stands.
 # (soffice names its output <name>.pdf, the designed PDF's name: hence the temp directory.)
 if command -v soffice &> /dev/null; then
@@ -56,7 +57,6 @@ if command -v soffice &> /dev/null; then
     if soffice --headless --convert-to pdf --outdir "$TMP_OUT" "$NAME.docx" > /dev/null 2>&1 && [ -s "$TMP_OUT/$NAME.pdf" ]; then
         mv "$TMP_OUT/$NAME.pdf" "$NAME-docx-preview.pdf"
         echo "Generated $NAME-docx-preview.pdf (the Word file as LibreOffice lays it out)"
-        ./check-extract.sh "$NAME-docx-preview.pdf" --plain "$@" || STATUS=1
     else
         echo "Notice: soffice could not convert $NAME.docx; no $NAME-docx-preview.pdf (everything else is unaffected)."
     fi
