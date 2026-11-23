@@ -1,40 +1,63 @@
 #!/bin/bash
+# print.sh [--location <text>] [--eu-location <text>]
+#
+# Prints the generic resume, US (resume) and European (cv), each as:
+#   <name>.pdf + <name>-preview.png   the designed one-page PDF
+#   <name>.docx, <name>-plain.pdf     plain single-column versions (make-plain.sh)
+# and reads every file back as text (check-extract.sh): exits 1 if one reads wrong.
+#
+#   --location     shows a location row, e.g. "New York, NY" (default: no location at all)
+#   --eu-location  the location for the European version (default: the --location text)
 
-# Find available chrome/headless_shell binary
-CHROME_BIN=""
-if command -v google-chrome &> /dev/null; then
-    CHROME_BIN="google-chrome"
-elif command -v chromium &> /dev/null; then
-    CHROME_BIN="chromium"
-elif [ -f "/home/dev/.cache/ms-playwright/chromium_headless_shell-1228/chrome-linux/headless_shell" ]; then
-    CHROME_BIN="/home/dev/.cache/ms-playwright/chromium_headless_shell-1228/chrome-linux/headless_shell"
-else
-    FOUND_BIN=$(find /home/dev/.cache/ms-playwright -name "headless_shell" 2>/dev/null | head -n 1)
-    if [ -n "$FOUND_BIN" ]; then
-        CHROME_BIN="$FOUND_BIN"
-    fi
-fi
-
-if [ -z "$CHROME_BIN" ]; then
-    echo "Error: No Chrome or headless_shell binary found."
+usage() {
+    echo "Usage: ./print.sh [--location <text>] [--eu-location <text>]"
     exit 1
-fi
+}
 
+LOCATION=""
+EU_LOCATION=""
+EU_LOCATION_SET=""
+while [ $# -gt 0 ]; do
+    if [[ "$1" == --location || "$1" == --eu-location ]] && [ $# -lt 2 ]; then
+        echo "Error: $1 needs a value."
+        exit 1
+    fi
+    case "$1" in
+        --location) LOCATION=$2; shift 2 ;;
+        --eu-location) EU_LOCATION=$2; EU_LOCATION_SET=1; shift 2 ;;
+        -h|--help) usage ;;
+        *) echo "Error: unknown option $1"; usage ;;
+    esac
+done
+[ -z "$EU_LOCATION_SET" ] && EU_LOCATION=$LOCATION
+
+cd "$(dirname "$0")" || exit 1
+. tools/common.sh
+find_chrome
 echo "Using browser: $CHROME_BIN"
 
-# Start server on an ephemeral port to avoid conflicts
+# Start server, clearing any previous one on the port
 echo "Starting temporary server..."
 PORT=8989
 fuser -k $PORT/tcp > /dev/null 2>&1 || true
 python3 -m http.server $PORT > /dev/null 2>&1 &
 SERVER_PID=$!
+trap 'kill $SERVER_PID > /dev/null 2>&1' EXIT
 
 # Wait a moment for the server to be ready
 sleep 2
 
-# print_version <name> <query>: <name>.pdf and <name>-preview.png from index.html?<query>
+urlencode() { python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "$1"; }
+
+STATUS=0
+
+# print_version <name> <region> <location>: <name>.pdf and <name>-preview.png from
+# index.html, then the checks and the plain versions.
 print_version() {
-    local NAME=$1 URL="http://localhost:$PORT/index.html${2:+?$2}"
+    local NAME=$1 REGION=$2 LOC=$3
+    local QUERY="region=$REGION"
+    [ -n "$LOC" ] && QUERY="$QUERY&location=$(urlencode "$LOC")"
+    local URL="http://localhost:$PORT/index.html?$QUERY"
     echo "Generating $NAME.pdf..."
     "$CHROME_BIN" --no-sandbox --headless --disable-gpu --print-to-pdf="$NAME.pdf" --no-margins --virtual-time-budget=5000 "$URL" 2>/dev/null
 
@@ -44,17 +67,19 @@ print_version() {
     else
         "$CHROME_BIN" --no-sandbox --headless --screenshot="$NAME-preview.png" --window-size=1200,1650 --virtual-time-budget=5000 "$URL" 2>/dev/null
     fi
+
+    after_print "$NAME" "$REGION" "" "$LOC" || STATUS=1
 }
 
 # The US version, and the European one (Spanish number) for visitors in Europe.
-print_version resume
-print_version cv "region=eu"
+print_version resume us "$LOCATION"
+print_version cv eu "$EU_LOCATION"
 
-# Clean up
-if [ ! -z "$SERVER_PID" ]; then
-    kill $SERVER_PID > /dev/null 2>&1 || true
+echo "---------------------------------"
+if [ $STATUS -ne 0 ]; then
+    echo "FAILED: see the errors above. The files were written but at least one reads wrong."
+else
+    echo "Done! resume and cv, each as .pdf, -preview.png, .docx and -plain.pdf; all read back correctly"
 fi
-
 echo "---------------------------------"
-echo "Done! Saved resume.pdf and cv.pdf, each with a -preview.png"
-echo "---------------------------------"
+exit $STATUS
